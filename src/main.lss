@@ -1,0 +1,96 @@
+
+src/main.elf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00000000 <__text_start>:
+   0:	10000400 	.word	0x10000400
+   4:	00000085 	.word	0x00000085
+	...
+
+00000020 <main>:
+  20:	4b14      	ldr	r3, [pc, #80]	; (74 <main+0x54>)
+  22:	2101      	movs	r1, #1
+  24:	681a      	ldr	r2, [r3, #0]
+  26:	b510      	push	{r4, lr}
+  28:	430a      	orrs	r2, r1
+  2a:	601a      	str	r2, [r3, #0]
+  2c:	4b12      	ldr	r3, [pc, #72]	; (78 <main+0x58>)
+  2e:	2280      	movs	r2, #128	; 0x80
+  30:	6fd8      	ldr	r0, [r3, #124]	; 0x7c
+  32:	0152      	lsls	r2, r2, #5
+  34:	4302      	orrs	r2, r0
+  36:	67da      	str	r2, [r3, #124]	; 0x7c
+  38:	4a10      	ldr	r2, [pc, #64]	; (7c <main+0x5c>)
+  3a:	2403      	movs	r4, #3
+  3c:	6813      	ldr	r3, [r2, #0]
+  3e:	430b      	orrs	r3, r1
+  40:	6013      	str	r3, [r2, #0]
+  42:	4b0f      	ldr	r3, [pc, #60]	; (80 <main+0x60>)
+  44:	6898      	ldr	r0, [r3, #8]
+  46:	4308      	orrs	r0, r1
+  48:	6098      	str	r0, [r3, #8]
+  4a:	68d8      	ldr	r0, [r3, #12]
+  4c:	4320      	orrs	r0, r4
+  4e:	60d8      	str	r0, [r3, #12]
+  50:	6b18      	ldr	r0, [r3, #48]	; 0x30
+  52:	2480      	movs	r4, #128	; 0x80
+  54:	4320      	orrs	r0, r4
+  56:	6318      	str	r0, [r3, #48]	; 0x30
+  58:	6818      	ldr	r0, [r3, #0]
+  5a:	24ff      	movs	r4, #255	; 0xff
+  5c:	4308      	orrs	r0, r1
+  5e:	6018      	str	r0, [r3, #0]
+  60:	6810      	ldr	r0, [r2, #0]
+  62:	3101      	adds	r1, #1
+  64:	43a0      	bics	r0, r4
+  66:	6010      	str	r0, [r2, #0]
+  68:	6810      	ldr	r0, [r2, #0]
+  6a:	b2c9      	uxtb	r1, r1
+  6c:	4308      	orrs	r0, r1
+  6e:	6010      	str	r0, [r2, #0]
+  70:	e7f2      	b.n	58 <main+0x38>
+  72:	46c0      	nop			; (mov r8, r8)
+  74:	400440a8 	.word	0x400440a8
+  78:	40048004 	.word	0x40048004
+  7c:	40048098 	.word	0x40048098
+  80:	40008000 	.word	0x40008000
+
+00000084 <__startup>:
+  84:	b510      	push	{r4, lr}
+  86:	4b0f      	ldr	r3, [pc, #60]	; (c4 <__startup+0x40>)
+  88:	4a0f      	ldr	r2, [pc, #60]	; (c8 <__startup+0x44>)
+  8a:	1d19      	adds	r1, r3, #4
+  8c:	3b04      	subs	r3, #4
+  8e:	4293      	cmp	r3, r2
+  90:	d003      	beq.n	9a <__startup+0x16>
+  92:	2200      	movs	r2, #0
+  94:	601a      	str	r2, [r3, #0]
+  96:	1c0b      	adds	r3, r1, #0
+  98:	e7f6      	b.n	88 <__startup+0x4>
+  9a:	4a0c      	ldr	r2, [pc, #48]	; (cc <__startup+0x48>)
+  9c:	490c      	ldr	r1, [pc, #48]	; (d0 <__startup+0x4c>)
+  9e:	2300      	movs	r3, #0
+  a0:	1a89      	subs	r1, r1, r2
+  a2:	0889      	lsrs	r1, r1, #2
+  a4:	3101      	adds	r1, #1
+  a6:	0089      	lsls	r1, r1, #2
+  a8:	3304      	adds	r3, #4
+  aa:	428b      	cmp	r3, r1
+  ac:	d007      	beq.n	be <__startup+0x3a>
+  ae:	4c09      	ldr	r4, [pc, #36]	; (d4 <__startup+0x50>)
+  b0:	18d0      	adds	r0, r2, r3
+  b2:	191c      	adds	r4, r3, r4
+  b4:	3c04      	subs	r4, #4
+  b6:	6824      	ldr	r4, [r4, #0]
+  b8:	3804      	subs	r0, #4
+  ba:	6004      	str	r4, [r0, #0]
+  bc:	e7f4      	b.n	a8 <__startup+0x24>
+  be:	f7ff ffaf 	bl	20 <main>
+  c2:	e7fe      	b.n	c2 <__startup+0x3e>
+  c4:	10000004 	.word	0x10000004
+  c8:	10000000 	.word	0x10000000
+  cc:	10000000 	.word	0x10000000
+  d0:	10000000 	.word	0x10000000
+  d4:	000000d8 	.word	0x000000d8
