@@ -1,0 +1,86 @@
+///--------------------------------------------------------------------------///
+///														 					 ///
+///	@author: Tom Verloop <Tom_Verloop@live.nl>			 					 ///
+///	@Version: 1.0										 					 ///
+///														 					 ///
+///														 					 ///
+///														 					 ///
+///--------------------------------------------------------------------------///
+
+#include "LPC11xx.h"
+
+const int Hz = 1;
+const int kHz = 1000;
+const int MHz = 1000 * 1000;
+
+const unsigned int LSR_RDR = 0x01;
+const unsigned int LSR_OE = 0x02;
+const unsigned int LSR_PE = 0x04;
+const unsigned int LSR_FE = 0x08;
+const unsigned int LSR_BI = 0x10;
+const unsigned int LSR_THRE = 0x20;
+const unsigned int LSR_TEMT = 0x40;
+const unsigned int LSR_RXFE = 0x80;
+const int clock_frequency = 12 * 1000 * 1000;
+const int baudrate = 38400;
+
+void baudrate_set(unsigned int baud)
+{
+	int Fdiv;
+	LPC_SYSCON->UARTCLKDIV = 0x1;     // divided by 1
+	Fdiv = clock_frequency / ( LPC_SYSCON->SYSAHBCLKDIV * 16 * baud);
+	LPC_UART->DLM = Fdiv / 256;
+	LPC_UART->DLL = Fdiv % 256;
+}
+
+int main(void)
+{
+
+	//SET UP UART (section 13.2 in datasheet "BASIC CONFIGURATION")
+	// enable IO config
+	LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 16);     //enable IOCON
+	LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 12);     //enable UART
+
+	// UART I/O config
+	LPC_IOCON->PIO1_6 &= ~0x07;
+	LPC_IOCON->PIO1_6 |= 0x01;     // UART RXD
+	LPC_IOCON->PIO1_7 &= ~0x07;
+	LPC_IOCON->PIO1_7 |= 0x01;     // UART TXD
+
+	// Enable UART clock
+	LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 12);
+
+	LPC_UART->LCR = 0x83;             // 8 bits, no Parity, 1 Stop bit
+	baudrate_set(38400);
+	LPC_UART->LCR = 0x03;   // DLAB = 0
+	LPC_UART->FCR = 0x07;   // Enable and reset TX and RX FIFO.
+
+	// Read to clear the line status.
+	(void) LPC_UART->LSR;
+
+	// Ensure a clean start, no data in either TX or RX FIFO.
+	while ((LPC_UART->LSR & (LSR_THRE | LSR_TEMT)) != (LSR_THRE | LSR_TEMT))
+		;
+	while ( LPC_UART->LSR & LSR_RDR)
+	{
+		(void) LPC_UART->RBR; // Dump data from RX FIFO
+	}
+
+	unsigned int i = 0;
+	unsigned int data = 0x55;
+
+	while (1)
+	{                 //infinite loop
+
+		LPC_UART->THR |= data & 0xFF;     //transmit data (sec 13.5.2)
+		for (i = 0; i < 0x3FFFF; ++i)
+			;             //arbitrary delay
+		while (1)
+		{               //wait for transmitted byte to loop back and be received
+			if (LPC_UART->LSR & 0x01) //if Receiver Data Ready bit set (sec 13.5.9)
+				break;
+		}
+		data = LPC_UART->RBR;               //store received data (sec 13.5.1)
+	}
+	return 0;
+}
