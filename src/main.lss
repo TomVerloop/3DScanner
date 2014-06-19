@@ -5,8 +5,8 @@ src/main.elf:     file format elf32-littlearm
 Disassembly of section .text:
 
 00000000 <__text_start>:
-   0:	10000410 	.word	0x10000410
-   4:	00000301 	.word	0x00000301
+   0:	10000450 	.word	0x10000450
+   4:	00000371 	.word	0x00000371
 	...
 
 00000020 <timer_init>:
@@ -238,166 +238,220 @@ Disassembly of section .text:
  200:	2c00      	cmp	r4, #0
  202:	d1f7      	bne.n	1f4 <i2c_put_byte+0x6>
  204:	bd38      	pop	{r3, r4, r5, pc}
-
-00000206 <stepMotor>:
- 206:	b508      	push	{r3, lr}
- 208:	2803      	cmp	r0, #3
- 20a:	d810      	bhi.n	22e <stepMotor+0x28>
- 20c:	f000 f8a2 	bl	354 <__gnu_thumb1_case_uqi>
- 210:	0b080502 	.word	0x0b080502
- 214:	2013      	movs	r0, #19
- 216:	210a      	movs	r1, #10
- 218:	e007      	b.n	22a <stepMotor+0x24>
- 21a:	2013      	movs	r0, #19
- 21c:	2106      	movs	r1, #6
- 21e:	e004      	b.n	22a <stepMotor+0x24>
- 220:	2013      	movs	r0, #19
- 222:	2105      	movs	r1, #5
- 224:	e001      	b.n	22a <stepMotor+0x24>
- 226:	2013      	movs	r0, #19
- 228:	2109      	movs	r1, #9
- 22a:	f7ff ff27 	bl	7c <MCP23017_writereg>
- 22e:	bd08      	pop	{r3, pc}
-
-00000230 <stepperStep>:
- 230:	17c1      	asrs	r1, r0, #31
- 232:	b538      	push	{r3, r4, r5, lr}
- 234:	1844      	adds	r4, r0, r1
- 236:	1c05      	adds	r5, r0, #0
- 238:	404c      	eors	r4, r1
- 23a:	2c00      	cmp	r4, #0
- 23c:	d02b      	beq.n	296 <stepperStep+0x66>
- 23e:	4b16      	ldr	r3, [pc, #88]	; (298 <stepperStep+0x68>)
- 240:	6818      	ldr	r0, [r3, #0]
- 242:	f7ff ff0f 	bl	64 <delay>
- 246:	4a15      	ldr	r2, [pc, #84]	; (29c <stepperStep+0x6c>)
- 248:	4b15      	ldr	r3, [pc, #84]	; (2a0 <stepperStep+0x70>)
- 24a:	6811      	ldr	r1, [r2, #0]
- 24c:	2d00      	cmp	r5, #0
- 24e:	dd0a      	ble.n	266 <stepperStep+0x36>
- 250:	3101      	adds	r1, #1
- 252:	6011      	str	r1, [r2, #0]
- 254:	4913      	ldr	r1, [pc, #76]	; (2a4 <stepperStep+0x74>)
- 256:	681a      	ldr	r2, [r3, #0]
- 258:	6809      	ldr	r1, [r1, #0]
- 25a:	3201      	adds	r2, #1
- 25c:	601a      	str	r2, [r3, #0]
- 25e:	428a      	cmp	r2, r1
- 260:	d10c      	bne.n	27c <stepperStep+0x4c>
- 262:	2200      	movs	r2, #0
- 264:	e009      	b.n	27a <stepperStep+0x4a>
- 266:	3901      	subs	r1, #1
- 268:	6011      	str	r1, [r2, #0]
- 26a:	681a      	ldr	r2, [r3, #0]
- 26c:	2a00      	cmp	r2, #0
- 26e:	d102      	bne.n	276 <stepperStep+0x46>
- 270:	4a0c      	ldr	r2, [pc, #48]	; (2a4 <stepperStep+0x74>)
- 272:	6812      	ldr	r2, [r2, #0]
- 274:	601a      	str	r2, [r3, #0]
- 276:	681a      	ldr	r2, [r3, #0]
- 278:	3a01      	subs	r2, #1
- 27a:	601a      	str	r2, [r3, #0]
- 27c:	6818      	ldr	r0, [r3, #0]
- 27e:	4b0a      	ldr	r3, [pc, #40]	; (2a8 <stepperStep+0x78>)
- 280:	3c01      	subs	r4, #1
- 282:	4018      	ands	r0, r3
- 284:	d504      	bpl.n	290 <stepperStep+0x60>
- 286:	2304      	movs	r3, #4
- 288:	3801      	subs	r0, #1
- 28a:	425b      	negs	r3, r3
- 28c:	4318      	orrs	r0, r3
- 28e:	3001      	adds	r0, #1
- 290:	f7ff ffb9 	bl	206 <stepMotor>
- 294:	e7d1      	b.n	23a <stepperStep+0xa>
- 296:	bd38      	pop	{r3, r4, r5, pc}
- 298:	10000000 	.word	0x10000000
- 29c:	10000004 	.word	0x10000004
- 2a0:	1000000c 	.word	0x1000000c
- 2a4:	10000008 	.word	0x10000008
- 2a8:	80000003 	.word	0x80000003
-
-000002ac <stepperInit>:
- 2ac:	b510      	push	{r4, lr}
- 2ae:	1c04      	adds	r4, r0, #0
- 2b0:	2000      	movs	r0, #0
- 2b2:	1c01      	adds	r1, r0, #0
- 2b4:	f7ff fee2 	bl	7c <MCP23017_writereg>
- 2b8:	2100      	movs	r1, #0
- 2ba:	2001      	movs	r0, #1
- 2bc:	f7ff fede 	bl	7c <MCP23017_writereg>
- 2c0:	2100      	movs	r1, #0
- 2c2:	2012      	movs	r0, #18
- 2c4:	f7ff feda 	bl	7c <MCP23017_writereg>
- 2c8:	2100      	movs	r1, #0
- 2ca:	2013      	movs	r0, #19
- 2cc:	f7ff fed6 	bl	7c <MCP23017_writereg>
- 2d0:	4b02      	ldr	r3, [pc, #8]	; (2dc <stepperInit+0x30>)
- 2d2:	4a03      	ldr	r2, [pc, #12]	; (2e0 <stepperInit+0x34>)
- 2d4:	601c      	str	r4, [r3, #0]
- 2d6:	4b03      	ldr	r3, [pc, #12]	; (2e4 <stepperInit+0x38>)
- 2d8:	601a      	str	r2, [r3, #0]
- 2da:	bd10      	pop	{r4, pc}
- 2dc:	10000008 	.word	0x10000008
- 2e0:	00002ee0 	.word	0x00002ee0
- 2e4:	10000000 	.word	0x10000000
-
-000002e8 <main>:
- 2e8:	b508      	push	{r3, lr}
- 2ea:	f7ff fe99 	bl	20 <timer_init>
- 2ee:	2040      	movs	r0, #64	; 0x40
- 2f0:	f7ff ffdc 	bl	2ac <stepperInit>
- 2f4:	2080      	movs	r0, #128	; 0x80
- 2f6:	0100      	lsls	r0, r0, #4
- 2f8:	f7ff ff9a 	bl	230 <stepperStep>
- 2fc:	e7fa      	b.n	2f4 <main+0xc>
 	...
 
-00000300 <__startup>:
- 300:	b510      	push	{r4, lr}
- 302:	4b0f      	ldr	r3, [pc, #60]	; (340 <__startup+0x40>)
- 304:	4a0f      	ldr	r2, [pc, #60]	; (344 <__startup+0x44>)
- 306:	1d19      	adds	r1, r3, #4
- 308:	3b04      	subs	r3, #4
- 30a:	4293      	cmp	r3, r2
- 30c:	d003      	beq.n	316 <__startup+0x16>
- 30e:	2200      	movs	r2, #0
- 310:	601a      	str	r2, [r3, #0]
- 312:	1c0b      	adds	r3, r1, #0
- 314:	e7f6      	b.n	304 <__startup+0x4>
- 316:	4a0c      	ldr	r2, [pc, #48]	; (348 <__startup+0x48>)
- 318:	490c      	ldr	r1, [pc, #48]	; (34c <__startup+0x4c>)
- 31a:	2300      	movs	r3, #0
- 31c:	1a89      	subs	r1, r1, r2
- 31e:	0889      	lsrs	r1, r1, #2
- 320:	3101      	adds	r1, #1
- 322:	0089      	lsls	r1, r1, #2
- 324:	3304      	adds	r3, #4
- 326:	428b      	cmp	r3, r1
- 328:	d007      	beq.n	33a <__startup+0x3a>
- 32a:	4c09      	ldr	r4, [pc, #36]	; (350 <__startup+0x50>)
- 32c:	18d0      	adds	r0, r2, r3
- 32e:	191c      	adds	r4, r3, r4
- 330:	3c04      	subs	r4, #4
- 332:	6824      	ldr	r4, [r4, #0]
- 334:	3804      	subs	r0, #4
- 336:	6004      	str	r4, [r0, #0]
- 338:	e7f4      	b.n	324 <__startup+0x24>
- 33a:	f7ff ffd5 	bl	2e8 <main>
- 33e:	e7fe      	b.n	33e <__startup+0x3e>
- 340:	10000008 	.word	0x10000008
- 344:	10000010 	.word	0x10000010
- 348:	10000000 	.word	0x10000000
- 34c:	10000004 	.word	0x10000004
- 350:	00000368 	.word	0x00000368
+00000208 <stepMotor>:
+ 208:	680a      	ldr	r2, [r1, #0]
+ 20a:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+ 20c:	1c0e      	adds	r6, r1, #0
+ 20e:	240f      	movs	r4, #15
+ 210:	684b      	ldr	r3, [r1, #4]
+ 212:	4d16      	ldr	r5, [pc, #88]	; (26c <stepMotor+0x64>)
+ 214:	2a12      	cmp	r2, #18
+ 216:	d105      	bne.n	224 <stepMotor+0x1c>
+ 218:	1c21      	adds	r1, r4, #0
+ 21a:	782c      	ldrb	r4, [r5, #0]
+ 21c:	4099      	lsls	r1, r3
+ 21e:	438c      	bics	r4, r1
+ 220:	702c      	strb	r4, [r5, #0]
+ 222:	e006      	b.n	232 <stepMotor+0x2a>
+ 224:	4912      	ldr	r1, [pc, #72]	; (270 <stepMotor+0x68>)
+ 226:	1c27      	adds	r7, r4, #0
+ 228:	780c      	ldrb	r4, [r1, #0]
+ 22a:	409f      	lsls	r7, r3
+ 22c:	43bc      	bics	r4, r7
+ 22e:	700c      	strb	r4, [r1, #0]
+ 230:	782c      	ldrb	r4, [r5, #0]
+ 232:	2803      	cmp	r0, #3
+ 234:	d812      	bhi.n	25c <stepMotor+0x54>
+ 236:	b2d2      	uxtb	r2, r2
+ 238:	f000 f8c4 	bl	3c4 <__gnu_thumb1_case_uqi>
+ 23c:	08060402 	.word	0x08060402
+ 240:	210a      	movs	r1, #10
+ 242:	e004      	b.n	24e <stepMotor+0x46>
+ 244:	2106      	movs	r1, #6
+ 246:	e002      	b.n	24e <stepMotor+0x46>
+ 248:	2105      	movs	r1, #5
+ 24a:	e000      	b.n	24e <stepMotor+0x46>
+ 24c:	2109      	movs	r1, #9
+ 24e:	4099      	lsls	r1, r3
+ 250:	430c      	orrs	r4, r1
+ 252:	b2e4      	uxtb	r4, r4
+ 254:	1c10      	adds	r0, r2, #0
+ 256:	1c21      	adds	r1, r4, #0
+ 258:	f7ff ff10 	bl	7c <MCP23017_writereg>
+ 25c:	6833      	ldr	r3, [r6, #0]
+ 25e:	2b12      	cmp	r3, #18
+ 260:	d101      	bne.n	266 <stepMotor+0x5e>
+ 262:	702c      	strb	r4, [r5, #0]
+ 264:	e001      	b.n	26a <stepMotor+0x62>
+ 266:	4b02      	ldr	r3, [pc, #8]	; (270 <stepMotor+0x68>)
+ 268:	701c      	strb	r4, [r3, #0]
+ 26a:	bdf8      	pop	{r3, r4, r5, r6, r7, pc}
+ 26c:	10000030 	.word	0x10000030
+ 270:	1000004c 	.word	0x1000004c
 
-00000354 <__gnu_thumb1_case_uqi>:
- 354:	b402      	push	{r1}
- 356:	4671      	mov	r1, lr
- 358:	0849      	lsrs	r1, r1, #1
- 35a:	0049      	lsls	r1, r1, #1
- 35c:	5c09      	ldrb	r1, [r1, r0]
- 35e:	0049      	lsls	r1, r1, #1
- 360:	448e      	add	lr, r1
- 362:	bc02      	pop	{r1}
- 364:	4770      	bx	lr
+00000274 <stepperStep>:
+ 274:	17c2      	asrs	r2, r0, #31
+ 276:	b570      	push	{r4, r5, r6, lr}
+ 278:	1885      	adds	r5, r0, r2
+ 27a:	1c06      	adds	r6, r0, #0
+ 27c:	1c0c      	adds	r4, r1, #0
+ 27e:	4055      	eors	r5, r2
+ 280:	2d00      	cmp	r5, #0
+ 282:	d026      	beq.n	2d2 <stepperStep+0x5e>
+ 284:	6920      	ldr	r0, [r4, #16]
+ 286:	f7ff feed 	bl	64 <delay>
+ 28a:	68a2      	ldr	r2, [r4, #8]
+ 28c:	68e3      	ldr	r3, [r4, #12]
+ 28e:	2e00      	cmp	r6, #0
+ 290:	dd08      	ble.n	2a4 <stepperStep+0x30>
+ 292:	3201      	adds	r2, #1
+ 294:	60a2      	str	r2, [r4, #8]
+ 296:	6962      	ldr	r2, [r4, #20]
+ 298:	3301      	adds	r3, #1
+ 29a:	60e3      	str	r3, [r4, #12]
+ 29c:	4293      	cmp	r3, r2
+ 29e:	d10a      	bne.n	2b6 <stepperStep+0x42>
+ 2a0:	2300      	movs	r3, #0
+ 2a2:	e007      	b.n	2b4 <stepperStep+0x40>
+ 2a4:	3a01      	subs	r2, #1
+ 2a6:	60a2      	str	r2, [r4, #8]
+ 2a8:	2b00      	cmp	r3, #0
+ 2aa:	d101      	bne.n	2b0 <stepperStep+0x3c>
+ 2ac:	6963      	ldr	r3, [r4, #20]
+ 2ae:	60e3      	str	r3, [r4, #12]
+ 2b0:	68e3      	ldr	r3, [r4, #12]
+ 2b2:	3b01      	subs	r3, #1
+ 2b4:	60e3      	str	r3, [r4, #12]
+ 2b6:	4807      	ldr	r0, [pc, #28]	; (2d4 <stepperStep+0x60>)
+ 2b8:	68e2      	ldr	r2, [r4, #12]
+ 2ba:	3d01      	subs	r5, #1
+ 2bc:	4010      	ands	r0, r2
+ 2be:	d504      	bpl.n	2ca <stepperStep+0x56>
+ 2c0:	2304      	movs	r3, #4
+ 2c2:	3801      	subs	r0, #1
+ 2c4:	425b      	negs	r3, r3
+ 2c6:	4318      	orrs	r0, r3
+ 2c8:	3001      	adds	r0, #1
+ 2ca:	1c21      	adds	r1, r4, #0
+ 2cc:	f7ff ff9c 	bl	208 <stepMotor>
+ 2d0:	e7d6      	b.n	280 <stepperStep+0xc>
+ 2d2:	bd70      	pop	{r4, r5, r6, pc}
+ 2d4:	80000003 	.word	0x80000003
+
+000002d8 <stepperInit>:
+ 2d8:	b510      	push	{r4, lr}
+ 2da:	1c04      	adds	r4, r0, #0
+ 2dc:	2000      	movs	r0, #0
+ 2de:	1c01      	adds	r1, r0, #0
+ 2e0:	f7ff fecc 	bl	7c <MCP23017_writereg>
+ 2e4:	2100      	movs	r1, #0
+ 2e6:	2001      	movs	r0, #1
+ 2e8:	f7ff fec8 	bl	7c <MCP23017_writereg>
+ 2ec:	2100      	movs	r1, #0
+ 2ee:	2012      	movs	r0, #18
+ 2f0:	f7ff fec4 	bl	7c <MCP23017_writereg>
+ 2f4:	2100      	movs	r1, #0
+ 2f6:	2013      	movs	r0, #19
+ 2f8:	f7ff fec0 	bl	7c <MCP23017_writereg>
+ 2fc:	4a0d      	ldr	r2, [pc, #52]	; (334 <stepperInit+0x5c>)
+ 2fe:	490e      	ldr	r1, [pc, #56]	; (338 <stepperInit+0x60>)
+ 300:	2300      	movs	r3, #0
+ 302:	2013      	movs	r0, #19
+ 304:	6010      	str	r0, [r2, #0]
+ 306:	6053      	str	r3, [r2, #4]
+ 308:	6154      	str	r4, [r2, #20]
+ 30a:	6093      	str	r3, [r2, #8]
+ 30c:	60d3      	str	r3, [r2, #12]
+ 30e:	6111      	str	r1, [r2, #16]
+ 310:	4a0a      	ldr	r2, [pc, #40]	; (33c <stepperInit+0x64>)
+ 312:	6010      	str	r0, [r2, #0]
+ 314:	2004      	movs	r0, #4
+ 316:	6050      	str	r0, [r2, #4]
+ 318:	6154      	str	r4, [r2, #20]
+ 31a:	6093      	str	r3, [r2, #8]
+ 31c:	60d3      	str	r3, [r2, #12]
+ 31e:	6111      	str	r1, [r2, #16]
+ 320:	4a07      	ldr	r2, [pc, #28]	; (340 <stepperInit+0x68>)
+ 322:	2012      	movs	r0, #18
+ 324:	6010      	str	r0, [r2, #0]
+ 326:	6053      	str	r3, [r2, #4]
+ 328:	6093      	str	r3, [r2, #8]
+ 32a:	60d3      	str	r3, [r2, #12]
+ 32c:	6111      	str	r1, [r2, #16]
+ 32e:	6154      	str	r4, [r2, #20]
+ 330:	bd10      	pop	{r4, pc}
+ 332:	46c0      	nop			; (mov r8, r8)
+ 334:	10000018 	.word	0x10000018
+ 338:	00002710 	.word	0x00002710
+ 33c:	10000034 	.word	0x10000034
+ 340:	10000000 	.word	0x10000000
+
+00000344 <main>:
+ 344:	b510      	push	{r4, lr}
+ 346:	f7ff fe6b 	bl	20 <timer_init>
+ 34a:	2040      	movs	r0, #64	; 0x40
+ 34c:	f7ff ffc4 	bl	2d8 <stepperInit>
+ 350:	4c05      	ldr	r4, [pc, #20]	; (368 <main+0x24>)
+ 352:	4806      	ldr	r0, [pc, #24]	; (36c <main+0x28>)
+ 354:	1c21      	adds	r1, r4, #0
+ 356:	f7ff ff8d 	bl	274 <stepperStep>
+ 35a:	2080      	movs	r0, #128	; 0x80
+ 35c:	0100      	lsls	r0, r0, #4
+ 35e:	1c21      	adds	r1, r4, #0
+ 360:	f7ff ff88 	bl	274 <stepperStep>
+ 364:	e7f4      	b.n	350 <main+0xc>
  366:	46c0      	nop			; (mov r8, r8)
+ 368:	10000000 	.word	0x10000000
+ 36c:	fffff800 	.word	0xfffff800
+
+00000370 <__startup>:
+ 370:	b510      	push	{r4, lr}
+ 372:	4b0f      	ldr	r3, [pc, #60]	; (3b0 <__startup+0x40>)
+ 374:	4a0f      	ldr	r2, [pc, #60]	; (3b4 <__startup+0x44>)
+ 376:	1d19      	adds	r1, r3, #4
+ 378:	3b04      	subs	r3, #4
+ 37a:	4293      	cmp	r3, r2
+ 37c:	d003      	beq.n	386 <__startup+0x16>
+ 37e:	2200      	movs	r2, #0
+ 380:	601a      	str	r2, [r3, #0]
+ 382:	1c0b      	adds	r3, r1, #0
+ 384:	e7f6      	b.n	374 <__startup+0x4>
+ 386:	4a0c      	ldr	r2, [pc, #48]	; (3b8 <__startup+0x48>)
+ 388:	490c      	ldr	r1, [pc, #48]	; (3bc <__startup+0x4c>)
+ 38a:	2300      	movs	r3, #0
+ 38c:	1a89      	subs	r1, r1, r2
+ 38e:	0889      	lsrs	r1, r1, #2
+ 390:	3101      	adds	r1, #1
+ 392:	0089      	lsls	r1, r1, #2
+ 394:	3304      	adds	r3, #4
+ 396:	428b      	cmp	r3, r1
+ 398:	d007      	beq.n	3aa <__startup+0x3a>
+ 39a:	4c09      	ldr	r4, [pc, #36]	; (3c0 <__startup+0x50>)
+ 39c:	18d0      	adds	r0, r2, r3
+ 39e:	191c      	adds	r4, r3, r4
+ 3a0:	3c04      	subs	r4, #4
+ 3a2:	6824      	ldr	r4, [r4, #0]
+ 3a4:	3804      	subs	r0, #4
+ 3a6:	6004      	str	r4, [r0, #0]
+ 3a8:	e7f4      	b.n	394 <__startup+0x24>
+ 3aa:	f7ff ffcb 	bl	344 <main>
+ 3ae:	e7fe      	b.n	3ae <__startup+0x3e>
+ 3b0:	10000004 	.word	0x10000004
+ 3b4:	10000050 	.word	0x10000050
+ 3b8:	10000000 	.word	0x10000000
+ 3bc:	10000000 	.word	0x10000000
+ 3c0:	000003d8 	.word	0x000003d8
+
+000003c4 <__gnu_thumb1_case_uqi>:
+ 3c4:	b402      	push	{r1}
+ 3c6:	4671      	mov	r1, lr
+ 3c8:	0849      	lsrs	r1, r1, #1
+ 3ca:	0049      	lsls	r1, r1, #1
+ 3cc:	5c09      	ldrb	r1, [r1, r0]
+ 3ce:	0049      	lsls	r1, r1, #1
+ 3d0:	448e      	add	lr, r1
+ 3d2:	bc02      	pop	{r1}
+ 3d4:	4770      	bx	lr
+ 3d6:	46c0      	nop			; (mov r8, r8)
