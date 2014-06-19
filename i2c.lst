@@ -1,0 +1,320 @@
+	.cpu cortex-m0
+	.fpu softvfp
+	.eabi_attribute 20, 1
+	.eabi_attribute 21, 1
+	.eabi_attribute 23, 3
+	.eabi_attribute 24, 1
+	.eabi_attribute 25, 1
+	.eabi_attribute 26, 1
+	.eabi_attribute 30, 4
+	.eabi_attribute 34, 0
+	.eabi_attribute 18, 4
+	.code	16
+	.file	"i2c.c"
+	.section	.text.i2c_scl_set.part.0,"ax",%progbits
+	.align	1
+	.code	16
+	.thumb_func
+	.type	i2c_scl_set.part.0, %function
+i2c_scl_set.part.0:
+	ldr	r3, .L2
+	mov	r2, #160
+	lsl	r2, r2, #23
+	ldr	r1, [r2, r3]
+	mov	r0, #16
+	orr	r1, r0
+	str	r1, [r2, r3]
+	@ sp needed
+	bx	lr
+.L3:
+	.align	2
+.L2:
+	.word	16380
+	.size	i2c_scl_set.part.0, .-i2c_scl_set.part.0
+	.section	.text.i2c_init,"ax",%progbits
+	.align	1
+	.global	i2c_init
+	.code	16
+	.thumb_func
+	.type	i2c_init, %function
+i2c_init:
+	@ sp needed
+	bx	lr
+	.size	i2c_init, .-i2c_init
+	.section	.text.i2c_pause,"ax",%progbits
+	.align	1
+	.global	i2c_pause
+	.code	16
+	.thumb_func
+	.type	i2c_pause, %function
+i2c_pause:
+	push	{r3, lr}
+	bl	now
+	add	r0, r0, #5
+	bl	await
+	@ sp needed
+	pop	{r3, pc}
+	.size	i2c_pause, .-i2c_pause
+	.section	.text.i2c_scl_set,"ax",%progbits
+	.align	1
+	.global	i2c_scl_set
+	.code	16
+	.thumb_func
+	.type	i2c_scl_set, %function
+i2c_scl_set:
+	push	{r3, lr}
+	cmp	r0, #0
+	beq	.L7
+	bl	i2c_scl_set.part.0
+	b	.L6
+.L7:
+	mov	r3, #160
+	mov	r2, #128
+	lsl	r3, r3, #23
+	lsl	r2, r2, #8
+	ldr	r0, [r3, r2]
+	mov	r1, #16
+	orr	r0, r1
+	str	r0, [r3, r2]
+	ldr	r2, .L10
+	ldr	r0, [r3, r2]
+	bic	r0, r1
+	str	r0, [r3, r2]
+.L6:
+	@ sp needed
+	pop	{r3, pc}
+.L11:
+	.align	2
+.L10:
+	.word	16380
+	.size	i2c_scl_set, .-i2c_scl_set
+	.section	.text.i2c_sda_set,"ax",%progbits
+	.align	1
+	.global	i2c_sda_set
+	.code	16
+	.thumb_func
+	.type	i2c_sda_set, %function
+i2c_sda_set:
+	mov	r3, #160
+	mov	r2, #128
+	lsl	r3, r3, #23
+	lsl	r2, r2, #8
+	mov	r1, #32
+	cmp	r0, #0
+	bne	.L15
+	ldr	r0, [r3, r2]
+	orr	r0, r1
+	str	r0, [r3, r2]
+	ldr	r2, .L16
+.L15:
+	ldr	r0, [r3, r2]
+	@ sp needed
+	bic	r0, r1
+	str	r0, [r3, r2]
+	bx	lr
+.L17:
+	.align	2
+.L16:
+	.word	16380
+	.size	i2c_sda_set, .-i2c_sda_set
+	.section	.text.i2c_sda_get,"ax",%progbits
+	.align	1
+	.global	i2c_sda_get
+	.code	16
+	.thumb_func
+	.type	i2c_sda_get, %function
+i2c_sda_get:
+	ldr	r3, .L19
+	mov	r2, #160
+	lsl	r2, r2, #23
+	ldr	r0, [r2, r3]
+	@ sp needed
+	lsl	r0, r0, #26
+	lsr	r0, r0, #31
+	bx	lr
+.L20:
+	.align	2
+.L19:
+	.word	16380
+	.size	i2c_sda_get, .-i2c_sda_get
+	.section	.text.i2c_start,"ax",%progbits
+	.align	1
+	.global	i2c_start
+	.code	16
+	.thumb_func
+	.type	i2c_start, %function
+i2c_start:
+	push	{r3, lr}
+	mov	r0, #0
+	bl	i2c_sda_set
+	bl	i2c_pause
+	mov	r0, #0
+	bl	i2c_scl_set
+	@ sp needed
+	bl	i2c_pause
+	pop	{r3, pc}
+	.size	i2c_start, .-i2c_start
+	.section	.text.i2c_stop,"ax",%progbits
+	.align	1
+	.global	i2c_stop
+	.code	16
+	.thumb_func
+	.type	i2c_stop, %function
+i2c_stop:
+	push	{r3, lr}
+	mov	r0, #0
+	bl	i2c_scl_set
+	bl	i2c_pause
+	mov	r0, #0
+	bl	i2c_sda_set
+	bl	i2c_pause
+	bl	i2c_scl_set.part.0
+	bl	i2c_pause
+	mov	r2, #160
+	mov	r3, #128
+	lsl	r2, r2, #23
+	lsl	r3, r3, #8
+	ldr	r1, [r2, r3]
+	mov	r0, #32
+	bic	r1, r0
+	str	r1, [r2, r3]
+	bl	i2c_pause
+	@ sp needed
+	pop	{r3, pc}
+	.size	i2c_stop, .-i2c_stop
+	.section	.text.i2c_put_bit,"ax",%progbits
+	.align	1
+	.global	i2c_put_bit
+	.code	16
+	.thumb_func
+	.type	i2c_put_bit, %function
+i2c_put_bit:
+	push	{r4, lr}
+	mov	r4, r0
+	mov	r0, #0
+	bl	i2c_scl_set
+	bl	i2c_pause
+	mov	r0, r4
+	bl	i2c_sda_set
+	@ sp needed
+	bl	i2c_scl_set.part.0
+	bl	i2c_pause
+	pop	{r4, pc}
+	.size	i2c_put_bit, .-i2c_put_bit
+	.section	.text.i2c_get_bit,"ax",%progbits
+	.align	1
+	.global	i2c_get_bit
+	.code	16
+	.thumb_func
+	.type	i2c_get_bit, %function
+i2c_get_bit:
+	push	{r4, lr}
+	mov	r0, #0
+	bl	i2c_scl_set
+	bl	i2c_pause
+	mov	r2, #160
+	mov	r3, #128
+	lsl	r2, r2, #23
+	lsl	r3, r3, #8
+	ldr	r1, [r2, r3]
+	mov	r0, #32
+	bic	r1, r0
+	str	r1, [r2, r3]
+	bl	i2c_scl_set.part.0
+	bl	i2c_pause
+	bl	i2c_sda_get
+	mov	r4, r0
+	@ sp needed
+	bl	i2c_pause
+	mov	r0, r4
+	pop	{r4, pc}
+	.size	i2c_get_bit, .-i2c_get_bit
+	.section	.text.i2c_ack_get,"ax",%progbits
+	.align	1
+	.global	i2c_ack_get
+	.code	16
+	.thumb_func
+	.type	i2c_ack_get, %function
+i2c_ack_get:
+	push	{r3, lr}
+	bl	i2c_get_bit
+	neg	r3, r0
+	adc	r0, r0, r3
+	uxtb	r0, r0
+	@ sp needed
+	pop	{r3, pc}
+	.size	i2c_ack_get, .-i2c_ack_get
+	.section	.text.i2c_put_ack,"ax",%progbits
+	.align	1
+	.global	i2c_put_ack
+	.code	16
+	.thumb_func
+	.type	i2c_put_ack, %function
+i2c_put_ack:
+	push	{r3, lr}
+	mov	r0, #0
+	bl	i2c_put_bit
+	@ sp needed
+	pop	{r3, pc}
+	.size	i2c_put_ack, .-i2c_put_ack
+	.section	.text.i2c_put_nack,"ax",%progbits
+	.align	1
+	.global	i2c_put_nack
+	.code	16
+	.thumb_func
+	.type	i2c_put_nack, %function
+i2c_put_nack:
+	push	{r3, lr}
+	mov	r0, #1
+	bl	i2c_put_bit
+	@ sp needed
+	pop	{r3, pc}
+	.size	i2c_put_nack, .-i2c_put_nack
+	.section	.text.i2c_put_byte,"ax",%progbits
+	.align	1
+	.global	i2c_put_byte
+	.code	16
+	.thumb_func
+	.type	i2c_put_byte, %function
+i2c_put_byte:
+	push	{r3, r4, r5, lr}
+	mov	r5, r0
+	mov	r4, #8
+.L30:
+	lsr	r0, r5, #7
+	sub	r4, r4, #1
+	lsl	r5, r5, #1
+	bl	i2c_put_bit
+	uxtb	r5, r5
+	cmp	r4, #0
+	bne	.L30
+	@ sp needed
+	pop	{r3, r4, r5, pc}
+	.size	i2c_put_byte, .-i2c_put_byte
+	.section	.text.i2c_get_byte,"ax",%progbits
+	.align	1
+	.global	i2c_get_byte
+	.code	16
+	.thumb_func
+	.type	i2c_get_byte, %function
+i2c_get_byte:
+	push	{r3, r4, r5, lr}
+	mov	r5, #8
+	mov	r4, #0
+.L34:
+	lsl	r4, r4, #1
+	uxtb	r4, r4
+	bl	i2c_get_bit
+	cmp	r0, #0
+	beq	.L32
+	mov	r3, #1
+	orr	r4, r3
+.L32:
+	sub	r5, r5, #1
+	cmp	r5, #0
+	bne	.L34
+	mov	r0, r4
+	@ sp needed
+	pop	{r3, r4, r5, pc}
+	.size	i2c_get_byte, .-i2c_get_byte
+	.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.8.3 20140228 (release) [ARM/embedded-4_8-branch revision 208322]"

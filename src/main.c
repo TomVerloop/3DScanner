@@ -8,79 +8,192 @@
 ///--------------------------------------------------------------------------///
 
 #include "LPC11xx.h"
+#include "pins.h"
+#include "sw_uart.h"
+#include "MCP23017.h"
+//#include <stdlib.h>
 
-const int Hz = 1;
-const int kHz = 1000;
-const int MHz = 1000 * 1000;
+#define STEPS_PER_REVOLUTION 2048
 
-const unsigned int LSR_RDR = 0x01;
-const unsigned int LSR_OE = 0x02;
-const unsigned int LSR_PE = 0x04;
-const unsigned int LSR_FE = 0x08;
-const unsigned int LSR_BI = 0x10;
-const unsigned int LSR_THRE = 0x20;
-const unsigned int LSR_TEMT = 0x40;
-const unsigned int LSR_RXFE = 0x80;
-const int clock_frequency = 12 * 1000 * 1000;
-const int baudrate = 38400;
-
-void baudrate_set(unsigned int baud)
+typedef struct
 {
-	int Fdiv;
-	LPC_SYSCON->UARTCLKDIV = 0x1;     // divided by 1
-	Fdiv = clock_frequency / ( LPC_SYSCON->SYSAHBCLKDIV * 16 * baud);
-	LPC_UART->DLM = Fdiv / 256;
-	LPC_UART->DLL = Fdiv % 256;
+	int Register;
+	int shiftNo;
+	int stepperPosition; // The current position (in steps) relative to 'Home'
+	int stepperStepNumber; // The current position (in steps) relative to 0°
+	int stepperStepDelay; // Delay in CPU ticks between individual steps
+	int stepperStepsPerRotation;  // Number of steps in a full 360° rotation
+	} Stepper;
+
+
+	void stepperMoveHome();
+	void stepperStep(int steps,Stepper  step);
+
+
+Stepper step1;
+Stepper step2;
+Stepper step3;
+
+void stepperSetSpeed(int delay, Stepper  step)
+{
+	step.stepperStepDelay = delay * 100;
+}
+
+int stepperGetPosition(Stepper  step)
+{
+	return step.stepperPosition;
+}
+
+int stepperGetRotation(Stepper  step)
+{
+	return step.stepperStepNumber;
+}
+
+void stepperMoveHome(Stepper  step)
+{
+	stepperStep(step.stepperPosition * -1,step);
+}
+
+void stepperSetHome(Stepper  step)
+{
+	step.stepperPosition = 0;
+}
+
+void stepperMoveZero(Stepper  step)
+{
+	if (!step.stepperStepNumber)
+	{
+		stepperStep(step.stepperStepsPerRotation - step.stepperStepNumber,step);
+	}
+}
+
+void stepperSetZero(Stepper step)
+{
+	step.stepperStepNumber = 0;
+}
+
+void stepMotor(int thisStep, Stepper  step)
+{
+	switch (thisStep)
+	{
+	case 0: // 1010
+		MCP23017_writereg(step.Register, 0x0A << step.shiftNo);
+		break;
+	case 1: // 0110
+		MCP23017_writereg(step.Register, 0x06 << step.shiftNo);
+		break;
+	case 2: // 0101
+		MCP23017_writereg(step.Register, 0x05 << step.shiftNo);
+		break;
+	case 3: // 1001
+		MCP23017_writereg(step.Register, 0x09 << step.shiftNo);
+		break;
+	}
+}
+
+void stepperStep(int steps, Stepper  step)
+{
+	int stepsLeft = abs(steps);          // Force number to be positive
+
+	while (stepsLeft > 0)
+	{
+		// Wait x ticks between individual steps
+		delay(step.stepperStepDelay);
+
+		// Increment or decrement step counters (depending on direction)
+		if (steps > 0)
+		{
+			step.stepperPosition++;         // Increment global position counter
+			step.stepperStepNumber++;       // Increment single rotation counter
+			if (step.stepperStepNumber == step.stepperStepsPerRotation)
+			{
+				step.stepperStepNumber = 0;
+			}
+		}
+		else
+		{
+			step.stepperPosition--;         // Decrement global position counter
+			if (step.stepperStepNumber == 0)
+			{
+				step.stepperStepNumber = step.stepperStepsPerRotation;
+			}
+			step.stepperStepNumber--;       // Decrement single rotation counter
+		}
+
+		// Decrement number of remaining steps
+		stepsLeft--;
+
+		// Step the motor one step
+		stepMotor(step.stepperStepNumber % 4,step);
+	}
+}
+
+void stepperInit(int steps)
+{
+	// Setup motor control pins
+
+	MCP23017_writereg(0x00, 0x00);
+	MCP23017_writereg(0x01, 0x00);
+	MCP23017_writereg(0x12, 0x00);
+	MCP23017_writereg(0x13, 0x00);
+	// Initialise 16-bit timer 0 which is used for delays
+	//timer_init();
+	step1.Register = 0x13;
+	step1.shiftNo = 0;
+	step1.stepperStepsPerRotation = steps;
+	step1.stepperPosition = 0; // The current position (in steps) relative to 'Home'
+	step1.stepperStepNumber = 0; // The current position (in steps) relative to 0°
+	step1.stepperStepDelay = 100 * 1000; // Delay in CPU ticks between individual steps
+	step2.Register = 0x13;
+	step2.shiftNo = 4;
+	step2.stepperStepsPerRotation = steps;
+	step2.stepperPosition = 0; // The current position (in steps) relative to 'Home'
+		step2.stepperStepNumber = 0; // The current position (in steps) relative to 0°
+		step2.stepperStepDelay = 100 * 1000; // Delay in CPU ticks between individual steps
+	step3.Register = 0x12;
+	step3.shiftNo = 0;
+	step3.stepperPosition = 0; // The current position (in steps) relative to 'Home'
+		step3.stepperStepNumber = 0; // The current position (in steps) relative to 0°
+		step3.stepperStepDelay = 100 * 1000; // Delay in CPU ticks between individual steps
+		step3.stepperStepsPerRotation = steps;
+
+	// Set the default speed (2 rotations per second)
+	stepperSetSpeed(120, step1);
+	stepperSetSpeed(120, step2);
+	stepperSetSpeed(120, step3);
 }
 
 int main(void)
 {
 
-	//SET UP UART (section 13.2 in datasheet "BASIC CONFIGURATION")
-	// enable IO config
-	LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 16);     //enable IOCON
-	LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 12);     //enable UART
+	//uart_init();
+	timer_init();
+	//pin_configure_as_output(0, 7);
+	//pin_set(0, 7, 0);
+	//while (1)
+	//{
+	//	unsigned int data = -1;
+	//	while (!uart_rend(0x02))
+	//	{
+	//		delay(1000);
+	//	}
+	//	if ( uart_receive_blocking() == 0x03)
+	//	{
+	//		while (data != 0x06)
+	//		{
+	//			data = uart_receive_blocking();
+	//
+	//		}
+	//	}
+	//}
 
-	// UART I/O config
-	LPC_IOCON->PIO1_6 &= ~0x07;
-	LPC_IOCON->PIO1_6 |= 0x01;     // UART RXD
-	LPC_IOCON->PIO1_7 &= ~0x07;
-	LPC_IOCON->PIO1_7 |= 0x01;     // UART TXD
-
-	// Enable UART clock
-	LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 12);
-
-	LPC_UART->LCR = 0x83;             // 8 bits, no Parity, 1 Stop bit
-	baudrate_set(38400);
-	LPC_UART->LCR = 0x03;   // DLAB = 0
-	LPC_UART->FCR = 0x07;   // Enable and reset TX and RX FIFO.
-
-	// Read to clear the line status.
-	(void) LPC_UART->LSR;
-
-	// Ensure a clean start, no data in either TX or RX FIFO.
-	while ((LPC_UART->LSR & (LSR_THRE | LSR_TEMT)) != (LSR_THRE | LSR_TEMT))
-		;
-	while ( LPC_UART->LSR & LSR_RDR)
-	{
-		(void) LPC_UART->RBR; // Dump data from RX FIFO
-	}
-
-	unsigned int i = 0;
-	unsigned int data = 0x55;
+	stepperInit(64);
 
 	while (1)
-	{                 //infinite loop
-
-		LPC_UART->THR |= data & 0xFF;     //transmit data (sec 13.5.2)
-		for (i = 0; i < 0x3FFFF; ++i)
-			;             //arbitrary delay
-		while (1)
-		{               //wait for transmitted byte to loop back and be received
-			if (LPC_UART->LSR & 0x01) //if Receiver Data Ready bit set (sec 13.5.9)
-				break;
-		}
-		data = LPC_UART->RBR;               //store received data (sec 13.5.1)
+	{
+		stepperStep(STEPS_PER_REVOLUTION,step1);
 	}
+	return 0;
+
 	return 0;
 }
