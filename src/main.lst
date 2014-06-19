@@ -11,39 +11,274 @@
 	.eabi_attribute 18, 4
 	.code	16
 	.file	"main.c"
-	.global	__aeabi_uidiv
-	.section	.text.baudrate_set,"ax",%progbits
+	.section	.text.stepperSetSpeed,"ax",%progbits
 	.align	1
-	.global	baudrate_set
+	.global	stepperSetSpeed
 	.code	16
 	.thumb_func
-	.type	baudrate_set, %function
-baudrate_set:
-	push	{r3, lr}
-	ldr	r3, .L2
-	mov	r1, #1
-	mov	r2, r3
-	add	r2, r2, #152
-	str	r1, [r2]
-	ldr	r1, [r3, #120]
+	.type	stepperSetSpeed, %function
+stepperSetSpeed:
+	mov	r3, #100
+	mul	r0, r3
 	@ sp needed
-	lsl	r1, r1, #4
-	mul	r1, r0
-	ldr	r0, .L2+4
-	bl	__aeabi_uidiv
-	ldr	r3, .L2+8
-	asr	r2, r0, #8
-	uxtb	r0, r0
-	str	r2, [r3, #4]
-	str	r0, [r3]
+	str	r0, [r1, #16]
+	bx	lr
+	.size	stepperSetSpeed, .-stepperSetSpeed
+	.section	.text.stepperGetPosition,"ax",%progbits
+	.align	1
+	.global	stepperGetPosition
+	.code	16
+	.thumb_func
+	.type	stepperGetPosition, %function
+stepperGetPosition:
+	ldr	r0, [r0, #8]
+	@ sp needed
+	bx	lr
+	.size	stepperGetPosition, .-stepperGetPosition
+	.section	.text.stepperGetRotation,"ax",%progbits
+	.align	1
+	.global	stepperGetRotation
+	.code	16
+	.thumb_func
+	.type	stepperGetRotation, %function
+stepperGetRotation:
+	ldr	r0, [r0, #12]
+	@ sp needed
+	bx	lr
+	.size	stepperGetRotation, .-stepperGetRotation
+	.section	.text.stepperSetHome,"ax",%progbits
+	.align	1
+	.global	stepperSetHome
+	.code	16
+	.thumb_func
+	.type	stepperSetHome, %function
+stepperSetHome:
+	mov	r3, #0
+	str	r3, [r0, #8]
+	@ sp needed
+	bx	lr
+	.size	stepperSetHome, .-stepperSetHome
+	.section	.text.stepperSetZero,"ax",%progbits
+	.align	1
+	.global	stepperSetZero
+	.code	16
+	.thumb_func
+	.type	stepperSetZero, %function
+stepperSetZero:
+	mov	r3, #0
+	str	r3, [r0, #12]
+	@ sp needed
+	bx	lr
+	.size	stepperSetZero, .-stepperSetZero
+	.section	.text.stepMotor,"ax",%progbits
+	.align	1
+	.global	stepMotor
+	.code	16
+	.thumb_func
+	.type	stepMotor, %function
+stepMotor:
+	push	{r3, lr}
+	cmp	r0, #3
+	bhi	.L6
+	ldmia	r1!, {r2, r3}
+	bl	__gnu_thumb1_case_uqi
+.L9:
+	.byte	(.L8-.L9)/2
+	.byte	(.L10-.L9)/2
+	.byte	(.L11-.L9)/2
+	.byte	(.L12-.L9)/2
+	.align	1
+.L8:
+	uxtb	r0, r2
+	mov	r1, #10
+	b	.L13
+.L10:
+	uxtb	r0, r2
+	mov	r1, #6
+	b	.L13
+.L11:
+	uxtb	r0, r2
+	mov	r1, #5
+	b	.L13
+.L12:
+	uxtb	r0, r2
+	mov	r1, #9
+.L13:
+	lsl	r1, r1, r3
+	uxtb	r1, r1
+	bl	MCP23017_writereg
+.L6:
+	@ sp needed
 	pop	{r3, pc}
-.L3:
+	.size	stepMotor, .-stepMotor
+	.section	.text.stepperStep,"ax",%progbits
+	.align	1
+	.global	stepperStep
+	.code	16
+	.thumb_func
+	.type	stepperStep, %function
+stepperStep:
+	asr	r2, r0, #31
+	push	{r4, r5, r6, lr}
+	add	r5, r0, r2
+	mov	r6, r0
+	mov	r4, r1
+	eor	r5, r2
+.L16:
+	cmp	r5, #0
+	beq	.L23
+	ldr	r0, [r4, #16]
+	bl	delay
+	ldr	r2, [r4, #8]
+	ldr	r3, [r4, #12]
+	cmp	r6, #0
+	ble	.L17
+	add	r2, r2, #1
+	str	r2, [r4, #8]
+	ldr	r2, [r4, #20]
+	add	r3, r3, #1
+	str	r3, [r4, #12]
+	cmp	r3, r2
+	bne	.L18
+	mov	r3, #0
+	b	.L22
+.L17:
+	sub	r2, r2, #1
+	str	r2, [r4, #8]
+	cmp	r3, #0
+	bne	.L19
+	ldr	r3, [r4, #20]
+	str	r3, [r4, #12]
+.L19:
+	ldr	r3, [r4, #12]
+	sub	r3, r3, #1
+.L22:
+	str	r3, [r4, #12]
+.L18:
+	ldr	r0, .L24
+	ldr	r2, [r4, #12]
+	sub	r5, r5, #1
+	and	r0, r2
+	bpl	.L20
+	mov	r3, #4
+	sub	r0, r0, #1
+	neg	r3, r3
+	orr	r0, r3
+	add	r0, r0, #1
+.L20:
+	mov	r1, r4
+	bl	stepMotor
+	b	.L16
+.L23:
+	@ sp needed
+	pop	{r4, r5, r6, pc}
+.L25:
 	.align	2
-.L2:
-	.word	1074036736
-	.word	12000000
-	.word	1073774592
-	.size	baudrate_set, .-baudrate_set
+.L24:
+	.word	-2147483645
+	.size	stepperStep, .-stepperStep
+	.section	.text.stepperMoveHome,"ax",%progbits
+	.align	1
+	.global	stepperMoveHome
+	.code	16
+	.thumb_func
+	.type	stepperMoveHome, %function
+stepperMoveHome:
+	push	{r3, lr}
+	ldr	r3, [r0, #8]
+	mov	r1, r0
+	neg	r0, r3
+	bl	stepperStep
+	@ sp needed
+	pop	{r3, pc}
+	.size	stepperMoveHome, .-stepperMoveHome
+	.section	.text.stepperMoveZero,"ax",%progbits
+	.align	1
+	.global	stepperMoveZero
+	.code	16
+	.thumb_func
+	.type	stepperMoveZero, %function
+stepperMoveZero:
+	push	{r3, lr}
+	ldr	r3, [r0, #12]
+	mov	r1, r0
+	cmp	r3, #0
+	bne	.L27
+	ldr	r0, [r0, #20]
+	bl	stepperStep
+.L27:
+	@ sp needed
+	pop	{r3, pc}
+	.size	stepperMoveZero, .-stepperMoveZero
+	.section	.text.stepperInit,"ax",%progbits
+	.align	1
+	.global	stepperInit
+	.code	16
+	.thumb_func
+	.type	stepperInit, %function
+stepperInit:
+	push	{r3, r4, r5, r6, r7, lr}
+	mov	r7, r0
+	mov	r0, #0
+	mov	r1, r0
+	bl	MCP23017_writereg
+	mov	r1, #0
+	mov	r0, #1
+	bl	MCP23017_writereg
+	mov	r1, #0
+	mov	r0, #18
+	bl	MCP23017_writereg
+	mov	r1, #0
+	mov	r0, #19
+	bl	MCP23017_writereg
+	mov	r0, #24
+	bl	malloc
+	ldr	r3, .L30
+	mov	r4, #0
+	str	r0, [r3]
+	mov	r3, #19
+	mov	r6, r0
+	str	r7, [r0, #20]
+	str	r3, [r0]
+	str	r4, [r0, #4]
+	str	r4, [r0, #8]
+	str	r4, [r0, #12]
+	mov	r0, #24
+	bl	malloc
+	ldr	r3, .L30+4
+	mov	r5, r0
+	str	r0, [r3]
+	mov	r3, #19
+	str	r3, [r0]
+	mov	r3, #4
+	str	r7, [r0, #20]
+	str	r3, [r0, #4]
+	str	r4, [r0, #8]
+	str	r4, [r0, #12]
+	mov	r0, #24
+	bl	malloc
+	ldr	r3, .L30+8
+	str	r7, [r0, #20]
+	str	r0, [r3]
+	mov	r3, #18
+	str	r3, [r0]
+	ldr	r3, .L30+12
+	str	r4, [r0, #4]
+	str	r3, [r6, #16]
+	str	r3, [r5, #16]
+	str	r4, [r0, #8]
+	str	r4, [r0, #12]
+	str	r3, [r0, #16]
+	@ sp needed
+	pop	{r3, r4, r5, r6, r7, pc}
+.L31:
+	.align	2
+.L30:
+	.word	step1
+	.word	step2
+	.word	step3
+	.word	12000
+	.size	stepperInit, .-stepperInit
 	.section	.text.startup.main,"ax",%progbits
 	.align	1
 	.global	main
@@ -51,177 +286,23 @@ baudrate_set:
 	.thumb_func
 	.type	main, %function
 main:
-	push	{r3, r4, r5, lr}
-	ldr	r3, .L16
-	mov	r2, #128
-	ldr	r1, [r3, #124]
-	lsl	r2, r2, #9
-	orr	r2, r1
-	str	r2, [r3, #124]
-	ldr	r2, [r3, #124]
-	mov	r1, #128
-	lsl	r1, r1, #5
-	orr	r2, r1
-	str	r2, [r3, #124]
-	ldr	r2, .L16+4
-	mov	r5, #7
-	ldr	r0, [r2]
-	bic	r0, r5
-	str	r0, [r2]
-	ldr	r4, [r2]
-	mov	r0, #1
-	orr	r4, r0
-	str	r4, [r2]
-	ldr	r2, .L16+8
-	ldr	r4, [r2]
-	bic	r4, r5
-	str	r4, [r2]
-	ldr	r4, [r2]
-	orr	r0, r4
-	str	r0, [r2]
-	ldr	r2, [r3, #124]
-	ldr	r4, .L16+12
-	orr	r1, r2
-	str	r1, [r3, #124]
-	mov	r0, #150
-	mov	r3, #131
-	str	r3, [r4, #12]
-	lsl	r0, r0, #8
-	bl	baudrate_set
-	mov	r3, #3
-	str	r3, [r4, #12]
-	str	r5, [r4, #8]
-	ldr	r3, [r4, #20]
-.L7:
-	ldr	r2, [r4, #20]
-	mov	r3, #96
-	and	r3, r2
-	cmp	r3, #96
-	bne	.L7
-.L6:
-	ldr	r3, [r4, #20]
-	lsl	r2, r3, #31
-	bpl	.L15
-	ldr	r3, .L16+12
-	ldr	r3, [r3]
-	b	.L6
-.L15:
-	mov	r3, #85
-.L13:
-	ldr	r2, [r4]
-	uxtb	r3, r3
-	orr	r3, r2
-	str	r3, [r4]
-	ldr	r3, .L16+16
-.L10:
-	sub	r3, r3, #1
-	cmp	r3, #0
-	bne	.L10
-.L12:
-	ldr	r3, [r4, #20]
-	lsl	r2, r3, #31
-	bpl	.L12
-	ldr	r3, .L16+12
-	ldr	r3, [r3]
-	b	.L13
-.L17:
+	push	{r3, lr}
+	bl	timer_init
+	mov	r0, #64
+	bl	stepperInit
+.L33:
+	ldr	r3, .L34
+	mov	r0, #128
+	ldr	r1, [r3]
+	lsl	r0, r0, #4
+	bl	stepperStep
+	b	.L33
+.L35:
 	.align	2
-.L16:
-	.word	1074036740
-	.word	1074020516
-	.word	1074020520
-	.word	1073774592
-	.word	262143
+.L34:
+	.word	step1
 	.size	main, .-main
-	.global	baudrate
-	.global	clock_frequency
-	.global	LSR_RXFE
-	.global	LSR_TEMT
-	.global	LSR_THRE
-	.global	LSR_BI
-	.global	LSR_FE
-	.global	LSR_PE
-	.global	LSR_OE
-	.global	LSR_RDR
-	.global	MHz
-	.global	kHz
-	.global	Hz
-	.section	.rodata.baudrate,"a",%progbits
-	.align	2
-	.type	baudrate, %object
-	.size	baudrate, 4
-baudrate:
-	.word	38400
-	.section	.rodata.LSR_OE,"a",%progbits
-	.align	2
-	.type	LSR_OE, %object
-	.size	LSR_OE, 4
-LSR_OE:
-	.word	2
-	.section	.rodata.kHz,"a",%progbits
-	.align	2
-	.type	kHz, %object
-	.size	kHz, 4
-kHz:
-	.word	1000
-	.section	.rodata.clock_frequency,"a",%progbits
-	.align	2
-	.type	clock_frequency, %object
-	.size	clock_frequency, 4
-clock_frequency:
-	.word	12000000
-	.section	.rodata.LSR_RXFE,"a",%progbits
-	.align	2
-	.type	LSR_RXFE, %object
-	.size	LSR_RXFE, 4
-LSR_RXFE:
-	.word	128
-	.section	.rodata.LSR_BI,"a",%progbits
-	.align	2
-	.type	LSR_BI, %object
-	.size	LSR_BI, 4
-LSR_BI:
-	.word	16
-	.section	.rodata.LSR_THRE,"a",%progbits
-	.align	2
-	.type	LSR_THRE, %object
-	.size	LSR_THRE, 4
-LSR_THRE:
-	.word	32
-	.section	.rodata.LSR_PE,"a",%progbits
-	.align	2
-	.type	LSR_PE, %object
-	.size	LSR_PE, 4
-LSR_PE:
-	.word	4
-	.section	.rodata.Hz,"a",%progbits
-	.align	2
-	.type	Hz, %object
-	.size	Hz, 4
-Hz:
-	.word	1
-	.section	.rodata.LSR_RDR,"a",%progbits
-	.align	2
-	.type	LSR_RDR, %object
-	.size	LSR_RDR, 4
-LSR_RDR:
-	.word	1
-	.section	.rodata.LSR_TEMT,"a",%progbits
-	.align	2
-	.type	LSR_TEMT, %object
-	.size	LSR_TEMT, 4
-LSR_TEMT:
-	.word	64
-	.section	.rodata.MHz,"a",%progbits
-	.align	2
-	.type	MHz, %object
-	.size	MHz, 4
-MHz:
-	.word	1000000
-	.section	.rodata.LSR_FE,"a",%progbits
-	.align	2
-	.type	LSR_FE, %object
-	.size	LSR_FE, 4
-LSR_FE:
-	.word	8
+	.comm	step3,4,4
+	.comm	step2,4,4
+	.comm	step1,4,4
 	.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.8.3 20140228 (release) [ARM/embedded-4_8-branch revision 208322]"
