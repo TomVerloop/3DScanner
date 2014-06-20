@@ -173,7 +173,7 @@ END GROUP
                 [0x00001000]                PROVIDE (__ram_size, __ram_size)
                 [0x10001000]                PROVIDE (__ram_end, __ram_end)
 
-.text           0x00000000      0x31c
+.text           0x00000000      0x2ec
                 0x00000000                . = ALIGN (0x4)
                 0x00000000                __text_start = .
                 [0x00000000]                PROVIDE (__text_start, __text_start)
@@ -201,53 +201,53 @@ END GROUP
  .text.uart_receive_blocking
                 0x00000128       0x10 sw_uart.o
                 0x00000128                uart_receive_blocking
- .text.uart_rend
+ .text.uart_send
                 0x00000138       0x3c sw_uart.o
-                0x00000138                uart_rend
+                0x00000138                uart_send
  .text.uart_receive_non_blocking
                 0x00000174       0x24 sw_uart.o
                 0x00000174                uart_receive_non_blocking
  .text.startup.main
-                0x00000198       0x90 ./src/main.o
+                0x00000198       0x60 ./src/main.o
                 0x00000198                main
  .text.__startup
-                0x00000228       0x54 cortex_startup.o
-                0x00000228                __startup
- .text          0x0000027c       0x9c c:/program files (x86)/gnu tools arm embedded/4.8 2014q1/bin/../lib/gcc/arm-none-eabi/4.8.3/armv6-m\libgcc.a(_udivsi3.o)
-                0x0000027c                __aeabi_uidiv
-                0x0000027c                __udivsi3
-                0x00000304                __aeabi_uidivmod
- .text          0x00000318        0x4 c:/program files (x86)/gnu tools arm embedded/4.8 2014q1/bin/../lib/gcc/arm-none-eabi/4.8.3/armv6-m\libgcc.a(_dvmd_tls.o)
-                0x00000318                __aeabi_idiv0
-                0x00000318                __aeabi_ldiv0
-                0x0000031c                . = ALIGN (0x4)
+                0x000001f8       0x54 cortex_startup.o
+                0x000001f8                __startup
+ .text          0x0000024c       0x9c c:/program files (x86)/gnu tools arm embedded/4.8 2014q1/bin/../lib/gcc/arm-none-eabi/4.8.3/armv6-m\libgcc.a(_udivsi3.o)
+                0x0000024c                __aeabi_uidiv
+                0x0000024c                __udivsi3
+                0x000002d4                __aeabi_uidivmod
+ .text          0x000002e8        0x4 c:/program files (x86)/gnu tools arm embedded/4.8 2014q1/bin/../lib/gcc/arm-none-eabi/4.8.3/armv6-m\libgcc.a(_dvmd_tls.o)
+                0x000002e8                __aeabi_idiv0
+                0x000002e8                __aeabi_ldiv0
+                0x000002ec                . = ALIGN (0x4)
  *(.glue_7t .glue_7)
  .glue_7        0x00000000        0x0 linker stubs
  .glue_7t       0x00000000        0x0 linker stubs
-                0x0000031c                . = ALIGN (0x4)
+                0x000002ec                . = ALIGN (0x4)
  *(.rodata .rodata.* .gnu.linkonce.r.*)
-                0x0000031c                . = ALIGN (0x4)
+                0x000002ec                . = ALIGN (0x4)
  *(.ARM.extab* .gnu.linkonce.armextab.*)
-                0x0000031c                . = ALIGN (0x4)
+                0x000002ec                . = ALIGN (0x4)
  *(.gcc_except_table)
-                0x0000031c                . = ALIGN (0x4)
+                0x000002ec                . = ALIGN (0x4)
  *(.eh_frame_hdr)
-                0x0000031c                . = ALIGN (0x4)
+                0x000002ec                . = ALIGN (0x4)
  *(.eh_frame)
-                0x0000031c                . = ALIGN (0x4)
-                0x0000031c                __text_end = .
-                [0x0000031c]                PROVIDE (__text_end, __text_end)
+                0x000002ec                . = ALIGN (0x4)
+                0x000002ec                __text_end = .
+                [0x000002ec]                PROVIDE (__text_end, __text_end)
 
-.vfp11_veneer   0x0000031c        0x0
+.vfp11_veneer   0x000002ec        0x0
  .vfp11_veneer  0x00000000        0x0 linker stubs
 
-.v4_bx          0x0000031c        0x0
+.v4_bx          0x000002ec        0x0
  .v4_bx         0x00000000        0x0 linker stubs
 
-.iplt           0x0000031c        0x0
+.iplt           0x000002ec        0x0
  .iplt          0x00000000        0x0 timer.o
 
-.rel.dyn        0x0000031c        0x0
+.rel.dyn        0x000002ec        0x0
  .rel.iplt      0x00000000        0x0 timer.o
 
 .IF_YOU_SEE_THIS_YOU_HAVE_ONE_OR_MORE_GLOBAL_OBJECT_CONSTRUCTORS
@@ -255,20 +255,20 @@ END GROUP
  *(.preinit_array)
  *(SORT(.init_array.*))
  *(.init_array)
-                0x0000031c                . = ALIGN (0x4)
-                0x0000031c                __exidx_start = .
-                [0x0000031c]                PROVIDE (__exidx_start, __exidx_start)
+                0x000002ec                . = ALIGN (0x4)
+                0x000002ec                __exidx_start = .
+                [0x000002ec]                PROVIDE (__exidx_start, __exidx_start)
 
 .ARM.exidx
  *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-                0x0000031c                . = ALIGN (0x4)
-                0x0000031c                __exidx_end = .
-                [0x0000031c]                PROVIDE (__exidx_end, __exidx_end)
+                0x000002ec                . = ALIGN (0x4)
+                0x000002ec                __exidx_end = .
+                [0x000002ec]                PROVIDE (__exidx_end, __exidx_end)
 
-.data           0x10000000        0xc load address 0x0000031c
+.data           0x10000000        0xc load address 0x000002ec
                 0x10000000                . = ALIGN (0x4)
-                0x0000031c                __data_init_start = LOADADDR (.data)
-                [0x0000031c]                PROVIDE (__data_init_start, __data_init_start)
+                0x000002ec                __data_init_start = LOADADDR (.data)
+                [0x000002ec]                PROVIDE (__data_init_start, __data_init_start)
                 0x10000000                __data_start = .
                 [0x10000000]                PROVIDE (__data_start, __data_start)
                 0x10000000                . = ALIGN (0x4)
@@ -283,7 +283,7 @@ END GROUP
                 0x1000000c                __data_end = .
                 [0x1000000c]                PROVIDE (__data_end, __data_end)
 
-.igot.plt       0x1000000c        0x0 load address 0x00000328
+.igot.plt       0x1000000c        0x0 load address 0x000002f8
  .igot.plt      0x00000000        0x0 timer.o
 
 .bss            0x1000000c        0x0
@@ -425,7 +425,7 @@ END GROUP
 
 /DISCARD/
  *(.note.GNU-stack)
-                0x0000031c                PROVIDE (__text_size, (__text_end - __text_start))
+                0x000002ec                PROVIDE (__text_size, (__text_end - __text_start))
                 0x00000000                PROVIDE (__exidx_size, (__exidx_end - __exidx_start))
                 0x0000000c                PROVIDE (__data_size, (__data_end - __data_start))
                 0x00000000                PROVIDE (__bss_size, (__bss_end - __bss_start))

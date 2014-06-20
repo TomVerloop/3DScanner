@@ -20,46 +20,37 @@ unsigned int z = 1000;
 int main(void)
 {
 
-uart_init();
+	uart_init();
 	timer_init();
-while (1)
-{
-	unsigned int data = -1;
-	while (!uart_rend(0x02))
+	while (1)
 	{
-		delay(1000);
-	}
-	if ( uart_receive_blocking() == 0x03)
-	{
-		while (data != 0x06)
+		//unsigned int data = -1;
+		while (!uart_send(0x02))
 		{
-			//data = uart_receive_blocking();
-			char data = x / 2;
-			uart_rend(data);
-			if(x % 2 == 1)
+			delay(1000);
+		}
+		if (uart_receive_blocking() == 0x03)
+		{
+			while (1)
 			{
-				data += 1;
-			}
-			uart_rend(data);
+				//data = uart_receive_blocking();
+				char data = x;
+				uart_send(data);
+				data = (x >> 8);
+				uart_send(data);
 
-			data = y / 2;
-			uart_rend(data);
-			if(y % 2 == 1)
-			{
-				data += 1;
-			}
-			uart_rend(data);
+				data = y;
+				uart_send(data);
+				data = (y >> 8);
+				uart_send(data);
 
-			data = z / 2;
-			uart_rend(data);
-			if(z % 2 == 1)
-			{
-				data += 1;
+				data = z;
+				uart_send(data);
+				data = (z >> 8);
+				uart_send(data);
 			}
-			uart_rend(data);
 		}
 	}
-}
 
 	stepperInit(64);
 

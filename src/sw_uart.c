@@ -79,7 +79,7 @@ int uart_receive_blocking()
 	int data = LPC_UART->RBR;
 	if (data != 0x01)
 	{
-		uart_rend(0x01);
+		uart_send(0x01);
 	}
 	return 0;
 }
@@ -91,7 +91,7 @@ int uart_receive_non_blocking()
 		int data = LPC_UART->RBR;
 		if (data != 0x01)
 		{
-			uart_rend(0x01);
+			uart_send(0x01);
 		}
 		return data;
 	}
@@ -99,7 +99,7 @@ int uart_receive_non_blocking()
 		return -1;
 }
 
-char uart_rend(unsigned int data)
+char uart_send(unsigned int data)
 {
 	LPC_UART->THR |= data & 0xFF;
 	if (data == 0x01)

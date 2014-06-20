@@ -136,13 +136,13 @@ uart_receive_blocking:
 .L16:
 	.word	1073774592
 	.size	uart_receive_blocking, .-uart_receive_blocking
-	.section	.text.uart_rend,"ax",%progbits
+	.section	.text.uart_send,"ax",%progbits
 	.align	1
-	.global	uart_rend
+	.global	uart_send
 	.code	16
 	.thumb_func
-	.type	uart_rend, %function
-uart_rend:
+	.type	uart_send, %function
+uart_send:
 	push	{r4, lr}
 	ldr	r3, .L28
 	uxtb	r1, r0
@@ -176,7 +176,7 @@ uart_rend:
 .L28:
 	.word	1073774592
 	.word	100000
-	.size	uart_rend, .-uart_rend
+	.size	uart_send, .-uart_send
 	.section	.text.uart_receive_non_blocking,"ax",%progbits
 	.align	1
 	.global	uart_receive_non_blocking
@@ -193,7 +193,7 @@ uart_receive_non_blocking:
 	ldr	r4, [r3]
 	cmp	r4, r0
 	beq	.L31
-	bl	uart_rend
+	bl	uart_send
 	mov	r0, r4
 	b	.L31
 .L32:
