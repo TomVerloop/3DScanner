@@ -106,16 +106,14 @@ char uart_rend(unsigned int data)
 	{
 		return 1;
 	}
-	int x = now() + 1000 * 1000;
-	while (x != now())
+	int x = now() + 100 * 1000;
+	while (x > now())
 	{
 		unsigned int ack = uart_receive_non_blocking();
 		if (ack == 0x01)
 		{
 			return 1;
 		}
-		else
-			break;
 	}
 	return 0;
 }

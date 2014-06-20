@@ -144,36 +144,38 @@ uart_receive_blocking:
 	.type	uart_rend, %function
 uart_rend:
 	push	{r4, lr}
-	ldr	r3, .L23
+	ldr	r3, .L28
 	uxtb	r1, r0
 	ldr	r2, [r3]
 	orr	r2, r1
 	str	r2, [r3]
-	mov	r3, #1
-	cmp	r0, r3
-	beq	.L19
-	bl	now
-	mov	r4, r0
-	bl	now
-	ldr	r3, .L23+4
-	add	r4, r4, r3
-	mov	r3, #0
-	cmp	r4, r0
-	beq	.L19
-	bl	uart_receive_non_blocking
-	sub	r3, r0, #1
-	neg	r2, r3
-	adc	r3, r3, r2
-	uxtb	r3, r3
+	cmp	r0, #1
+	bne	.L19
+.L22:
+	mov	r0, #1
+	b	.L20
 .L19:
-	mov	r0, r3
+	bl	now
+	ldr	r3, .L28+4
+	add	r4, r0, r3
+.L21:
+	bl	now
+	cmp	r4, r0
+	bls	.L27
+	bl	uart_receive_non_blocking
+	cmp	r0, #1
+	bne	.L21
+	b	.L22
+.L27:
+	mov	r0, #0
+.L20:
 	@ sp needed
 	pop	{r4, pc}
-.L24:
+.L29:
 	.align	2
-.L23:
+.L28:
 	.word	1073774592
-	.word	1000000
+	.word	100000
 	.size	uart_rend, .-uart_rend
 	.section	.text.uart_receive_non_blocking,"ax",%progbits
 	.align	1
@@ -182,27 +184,27 @@ uart_rend:
 	.thumb_func
 	.type	uart_receive_non_blocking, %function
 uart_receive_non_blocking:
-	ldr	r3, .L30
+	ldr	r3, .L35
 	mov	r0, #1
 	ldr	r2, [r3, #20]
 	push	{r4, lr}
 	tst	r2, r0
-	beq	.L27
+	beq	.L32
 	ldr	r4, [r3]
 	cmp	r4, r0
-	beq	.L26
+	beq	.L31
 	bl	uart_rend
 	mov	r0, r4
-	b	.L26
-.L27:
+	b	.L31
+.L32:
 	mov	r0, #1
 	neg	r0, r0
-.L26:
+.L31:
 	@ sp needed
 	pop	{r4, pc}
-.L31:
+.L36:
 	.align	2
-.L30:
+.L35:
 	.word	1073774592
 	.size	uart_receive_non_blocking, .-uart_receive_non_blocking
 	.global	baudrate
