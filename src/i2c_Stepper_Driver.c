@@ -7,7 +7,6 @@
 
 #include "MCP23017.h"
 #include "i2c_Stepper_Driver.h"
-#include <stdlib.h>
 #include "timer.h"
 
 
