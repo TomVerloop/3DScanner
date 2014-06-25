@@ -10,11 +10,13 @@ c:/program files (x86)/gnu tools arm embedded/4.8 2014q1/bin/../lib/gcc/arm-none
 Allocating common symbols
 Common symbol       size              file
 
+verticalStepper     0x4               ./src/main.o
 step3               0x18              i2c_Stepper_Driver.o
 __dso_handle        0x4               cortex_startup.o
 step1               0x18              i2c_Stepper_Driver.o
 RegA                0x1               i2c_Stepper_Driver.o
 step2               0x18              i2c_Stepper_Driver.o
+horizontalStepper   0x4               ./src/main.o
 RegB                0x1               i2c_Stepper_Driver.o
 
 Discarded input sections
@@ -22,6 +24,9 @@ Discarded input sections
  .text          0x00000000        0x0 timer.o
  .data          0x00000000        0x0 timer.o
  .bss           0x00000000        0x0 timer.o
+ .text          0x00000000        0x0 adconv.o
+ .data          0x00000000        0x0 adconv.o
+ .bss           0x00000000        0x0 adconv.o
  .text          0x00000000        0x0 sw_uart.o
  .data          0x00000000        0x0 sw_uart.o
  .bss           0x00000000        0x0 sw_uart.o
@@ -51,8 +56,6 @@ Discarded input sections
  .text          0x00000000        0x0 MCP23017.o
  .data          0x00000000        0x0 MCP23017.o
  .bss           0x00000000        0x0 MCP23017.o
- .text.MCP23017_writereg
-                0x00000000       0x40 MCP23017.o
  .text.MCP23017_readreg
                 0x00000000       0x4c MCP23017.o
  .text.MCP23017_SetOutput
@@ -66,34 +69,12 @@ Discarded input sections
  .text          0x00000000        0x0 i2c.o
  .data          0x00000000        0x0 i2c.o
  .bss           0x00000000        0x0 i2c.o
- .text.i2c_scl_set.part.0
-                0x00000000       0x14 i2c.o
  .text.i2c_init
                 0x00000000        0x2 i2c.o
- .text.i2c_pause
-                0x00000000        0xe i2c.o
- .text.i2c_scl_set
-                0x00000000       0x2c i2c.o
- .text.i2c_sda_set
-                0x00000000       0x24 i2c.o
- .text.i2c_sda_get
-                0x00000000       0x14 i2c.o
- .text.i2c_start
-                0x00000000       0x18 i2c.o
- .text.i2c_stop
-                0x00000000       0x34 i2c.o
- .text.i2c_put_bit
-                0x00000000       0x1e i2c.o
- .text.i2c_get_bit
-                0x00000000       0x32 i2c.o
- .text.i2c_ack_get
-                0x00000000        0xe i2c.o
  .text.i2c_put_ack
                 0x00000000        0xa i2c.o
  .text.i2c_put_nack
                 0x00000000        0xa i2c.o
- .text.i2c_put_byte
-                0x00000000       0x18 i2c.o
  .text.i2c_get_byte
                 0x00000000       0x20 i2c.o
  .text          0x00000000        0x0 i2c_Stepper_Driver.o
@@ -109,25 +90,28 @@ Discarded input sections
                 0x00000000        0x6 i2c_Stepper_Driver.o
  .text.stepperSetZero
                 0x00000000        0x6 i2c_Stepper_Driver.o
- .text.stepMotor
-                0x00000000       0x6c i2c_Stepper_Driver.o
- .text.stepperStep
-                0x00000000       0x64 i2c_Stepper_Driver.o
  .text.stepperMoveHome
                 0x00000000        0xe i2c_Stepper_Driver.o
  .text.stepperMoveZero
                 0x00000000       0x12 i2c_Stepper_Driver.o
- .text.stepperInit
-                0x00000000       0x6c i2c_Stepper_Driver.o
- COMMON         0x00000000       0x4d i2c_Stepper_Driver.o
+ .text          0x00000000        0x0 pins.o
+ .data          0x00000000        0x0 pins.o
+ .bss           0x00000000        0x0 pins.o
+ .text.pin_configure_as_input
+                0x00000000       0x34 pins.o
+ .text.pin_configure_as_output
+                0x00000000       0x34 pins.o
+ .text.pin_set  0x00000000       0x4c pins.o
+ .text.pin_get  0x00000000       0x38 pins.o
  .text          0x00000000        0x0 ./src/main.o
  .data          0x00000000        0x0 ./src/main.o
  .bss           0x00000000        0x0 ./src/main.o
+ .text.sendData
+                0x00000000       0x12 ./src/main.o
  .text          0x00000000        0x0 cortex_startup.o
  .data          0x00000000        0x0 cortex_startup.o
  .bss           0x00000000        0x0 cortex_startup.o
  COMMON         0x00000000        0x4 cortex_startup.o
- .text          0x00000000       0x14 c:/program files (x86)/gnu tools arm embedded/4.8 2014q1/bin/../lib/gcc/arm-none-eabi/4.8.3/armv6-m\libgcc.a(_thumb1_case_uqi.o)
  .data          0x00000000        0x0 c:/program files (x86)/gnu tools arm embedded/4.8 2014q1/bin/../lib/gcc/arm-none-eabi/4.8.3/armv6-m\libgcc.a(_thumb1_case_uqi.o)
  .bss           0x00000000        0x0 c:/program files (x86)/gnu tools arm embedded/4.8 2014q1/bin/../lib/gcc/arm-none-eabi/4.8.3/armv6-m\libgcc.a(_thumb1_case_uqi.o)
  .data          0x00000000        0x0 c:/program files (x86)/gnu tools arm embedded/4.8 2014q1/bin/../lib/gcc/arm-none-eabi/4.8.3/armv6-m\libgcc.a(_udivsi3.o)
@@ -146,10 +130,12 @@ nul              0x20000000         0x00000000         xrw
 Linker script and memory map
 
 LOAD timer.o
+LOAD adconv.o
 LOAD sw_uart.o
 LOAD MCP23017.o
 LOAD i2c.o
 LOAD i2c_Stepper_Driver.o
+LOAD pins.o
 LOAD ./src/main.o
 LOAD cortex_startup.o
 START GROUP
@@ -173,7 +159,7 @@ END GROUP
                 [0x00001000]                PROVIDE (__ram_size, __ram_size)
                 [0x10001000]                PROVIDE (__ram_end, __ram_end)
 
-.text           0x00000000      0x2ec
+.text           0x00000000      0x694
                 0x00000000                . = ALIGN (0x4)
                 0x00000000                __text_start = .
                 [0x00000000]                PROVIDE (__text_start, __text_start)
@@ -192,62 +178,119 @@ END GROUP
                 0x00000054                await
  .text.delay    0x00000064       0x18 timer.o
                 0x00000064                delay
+ .text.adc_init
+                0x0000007c       0x80 adconv.o
+                0x0000007c                adc_init
+ .text.adc_getVal
+                0x000000fc       0x10 adconv.o
+                0x000000fc                adc_getVal
+ .text.adc_ready
+                0x0000010c       0x28 adconv.o
+                0x0000010c                adc_ready
  .text.baudrate_set
-                0x0000007c       0x30 sw_uart.o
-                0x0000007c                baudrate_set
+                0x00000134       0x30 sw_uart.o
+                0x00000134                baudrate_set
  .text.uart_init
-                0x000000ac       0x7c sw_uart.o
-                0x000000ac                uart_init
+                0x00000164       0x7c sw_uart.o
+                0x00000164                uart_init
  .text.uart_receive_blocking
-                0x00000128       0x10 sw_uart.o
-                0x00000128                uart_receive_blocking
- .text.uart_send
-                0x00000138       0x3c sw_uart.o
-                0x00000138                uart_send
+                0x000001e0       0x10 sw_uart.o
+                0x000001e0                uart_receive_blocking
  .text.uart_receive_non_blocking
-                0x00000174       0x24 sw_uart.o
-                0x00000174                uart_receive_non_blocking
+                0x000001f0       0x18 sw_uart.o
+                0x000001f0                uart_receive_non_blocking
+ .text.uart_send
+                0x00000208        0xc sw_uart.o
+                0x00000208                uart_send
+ .text.MCP23017_writereg
+                0x00000214       0x40 MCP23017.o
+                0x00000214                MCP23017_writereg
+ .text.i2c_scl_set.part.0
+                0x00000254       0x14 i2c.o
+ .text.i2c_pause
+                0x00000268        0xe i2c.o
+                0x00000268                i2c_pause
+ *fill*         0x00000276        0x2 
+ .text.i2c_scl_set
+                0x00000278       0x2c i2c.o
+                0x00000278                i2c_scl_set
+ .text.i2c_sda_set
+                0x000002a4       0x24 i2c.o
+                0x000002a4                i2c_sda_set
+ .text.i2c_sda_get
+                0x000002c8       0x14 i2c.o
+                0x000002c8                i2c_sda_get
+ .text.i2c_start
+                0x000002dc       0x18 i2c.o
+                0x000002dc                i2c_start
+ .text.i2c_stop
+                0x000002f4       0x34 i2c.o
+                0x000002f4                i2c_stop
+ .text.i2c_put_bit
+                0x00000328       0x1e i2c.o
+                0x00000328                i2c_put_bit
+ .text.i2c_get_bit
+                0x00000346       0x32 i2c.o
+                0x00000346                i2c_get_bit
+ .text.i2c_ack_get
+                0x00000378        0xe i2c.o
+                0x00000378                i2c_ack_get
+ .text.i2c_put_byte
+                0x00000386       0x18 i2c.o
+                0x00000386                i2c_put_byte
+ *fill*         0x0000039e        0x2 
+ .text.stepMotor
+                0x000003a0       0x68 i2c_Stepper_Driver.o
+                0x000003a0                stepMotor
+ .text.stepperStep
+                0x00000408       0x64 i2c_Stepper_Driver.o
+                0x00000408                stepperStep
+ .text.stepperInit
+                0x0000046c       0x6c i2c_Stepper_Driver.o
+                0x0000046c                stepperInit
  .text.startup.main
-                0x00000198       0x60 ./src/main.o
-                0x00000198                main
+                0x000004d8       0xb4 ./src/main.o
+                0x000004d8                main
  .text.__startup
-                0x000001f8       0x54 cortex_startup.o
-                0x000001f8                __startup
- .text          0x0000024c       0x9c c:/program files (x86)/gnu tools arm embedded/4.8 2014q1/bin/../lib/gcc/arm-none-eabi/4.8.3/armv6-m\libgcc.a(_udivsi3.o)
-                0x0000024c                __aeabi_uidiv
-                0x0000024c                __udivsi3
-                0x000002d4                __aeabi_uidivmod
- .text          0x000002e8        0x4 c:/program files (x86)/gnu tools arm embedded/4.8 2014q1/bin/../lib/gcc/arm-none-eabi/4.8.3/armv6-m\libgcc.a(_dvmd_tls.o)
-                0x000002e8                __aeabi_idiv0
-                0x000002e8                __aeabi_ldiv0
-                0x000002ec                . = ALIGN (0x4)
+                0x0000058c       0x54 cortex_startup.o
+                0x0000058c                __startup
+ .text          0x000005e0       0x14 c:/program files (x86)/gnu tools arm embedded/4.8 2014q1/bin/../lib/gcc/arm-none-eabi/4.8.3/armv6-m\libgcc.a(_thumb1_case_uqi.o)
+                0x000005e0                __gnu_thumb1_case_uqi
+ .text          0x000005f4       0x9c c:/program files (x86)/gnu tools arm embedded/4.8 2014q1/bin/../lib/gcc/arm-none-eabi/4.8.3/armv6-m\libgcc.a(_udivsi3.o)
+                0x000005f4                __aeabi_uidiv
+                0x000005f4                __udivsi3
+                0x0000067c                __aeabi_uidivmod
+ .text          0x00000690        0x4 c:/program files (x86)/gnu tools arm embedded/4.8 2014q1/bin/../lib/gcc/arm-none-eabi/4.8.3/armv6-m\libgcc.a(_dvmd_tls.o)
+                0x00000690                __aeabi_idiv0
+                0x00000690                __aeabi_ldiv0
+                0x00000694                . = ALIGN (0x4)
  *(.glue_7t .glue_7)
  .glue_7        0x00000000        0x0 linker stubs
  .glue_7t       0x00000000        0x0 linker stubs
-                0x000002ec                . = ALIGN (0x4)
+                0x00000694                . = ALIGN (0x4)
  *(.rodata .rodata.* .gnu.linkonce.r.*)
-                0x000002ec                . = ALIGN (0x4)
+                0x00000694                . = ALIGN (0x4)
  *(.ARM.extab* .gnu.linkonce.armextab.*)
-                0x000002ec                . = ALIGN (0x4)
+                0x00000694                . = ALIGN (0x4)
  *(.gcc_except_table)
-                0x000002ec                . = ALIGN (0x4)
+                0x00000694                . = ALIGN (0x4)
  *(.eh_frame_hdr)
-                0x000002ec                . = ALIGN (0x4)
+                0x00000694                . = ALIGN (0x4)
  *(.eh_frame)
-                0x000002ec                . = ALIGN (0x4)
-                0x000002ec                __text_end = .
-                [0x000002ec]                PROVIDE (__text_end, __text_end)
+                0x00000694                . = ALIGN (0x4)
+                0x00000694                __text_end = .
+                [0x00000694]                PROVIDE (__text_end, __text_end)
 
-.vfp11_veneer   0x000002ec        0x0
+.vfp11_veneer   0x00000694        0x0
  .vfp11_veneer  0x00000000        0x0 linker stubs
 
-.v4_bx          0x000002ec        0x0
+.v4_bx          0x00000694        0x0
  .v4_bx         0x00000000        0x0 linker stubs
 
-.iplt           0x000002ec        0x0
+.iplt           0x00000694        0x0
  .iplt          0x00000000        0x0 timer.o
 
-.rel.dyn        0x000002ec        0x0
+.rel.dyn        0x00000694        0x0
  .rel.iplt      0x00000000        0x0 timer.o
 
 .IF_YOU_SEE_THIS_YOU_HAVE_ONE_OR_MORE_GLOBAL_OBJECT_CONSTRUCTORS
@@ -255,76 +298,82 @@ END GROUP
  *(.preinit_array)
  *(SORT(.init_array.*))
  *(.init_array)
-                0x000002ec                . = ALIGN (0x4)
-                0x000002ec                __exidx_start = .
-                [0x000002ec]                PROVIDE (__exidx_start, __exidx_start)
+                0x00000694                . = ALIGN (0x4)
+                0x00000694                __exidx_start = .
+                [0x00000694]                PROVIDE (__exidx_start, __exidx_start)
 
 .ARM.exidx
  *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-                0x000002ec                . = ALIGN (0x4)
-                0x000002ec                __exidx_end = .
-                [0x000002ec]                PROVIDE (__exidx_end, __exidx_end)
+                0x00000694                . = ALIGN (0x4)
+                0x00000694                __exidx_end = .
+                [0x00000694]                PROVIDE (__exidx_end, __exidx_end)
 
-.data           0x10000000        0xc load address 0x000002ec
+.data           0x10000000        0x0 load address 0x00000694
                 0x10000000                . = ALIGN (0x4)
-                0x000002ec                __data_init_start = LOADADDR (.data)
-                [0x000002ec]                PROVIDE (__data_init_start, __data_init_start)
+                0x00000694                __data_init_start = LOADADDR (.data)
+                [0x00000694]                PROVIDE (__data_init_start, __data_init_start)
                 0x10000000                __data_start = .
                 [0x10000000]                PROVIDE (__data_start, __data_start)
                 0x10000000                . = ALIGN (0x4)
  *(.data .data.* .gnu.linkonce.d.*)
- .data.x        0x10000000        0x4 ./src/main.o
-                0x10000000                x
- .data.y        0x10000004        0x4 ./src/main.o
-                0x10000004                y
- .data.z        0x10000008        0x4 ./src/main.o
-                0x10000008                z
-                0x1000000c                . = ALIGN (0x4)
-                0x1000000c                __data_end = .
-                [0x1000000c]                PROVIDE (__data_end, __data_end)
+                0x10000000                . = ALIGN (0x4)
+                0x10000000                __data_end = .
+                [0x10000000]                PROVIDE (__data_end, __data_end)
 
-.igot.plt       0x1000000c        0x0 load address 0x000002f8
+.igot.plt       0x10000000        0x0 load address 0x00000694
  .igot.plt      0x00000000        0x0 timer.o
 
-.bss            0x1000000c        0x0
-                0x1000000c                . = ALIGN (0x4)
-                0x1000000c                __bss_start = .
-                [0x1000000c]                PROVIDE (__bss_start, __bss_start)
-                0x1000000c                . = ALIGN (0x4)
+.bss            0x10000000       0x5c
+                0x10000000                . = ALIGN (0x4)
+                0x10000000                __bss_start = .
+                [0x10000000]                PROVIDE (__bss_start, __bss_start)
+                0x10000000                . = ALIGN (0x4)
  *(.bss .bss.* .gnu.linkonce.b.*)
-                0x1000000c                . = ALIGN (0x4)
+ .bss.x         0x10000000        0x4 ./src/main.o
+                0x10000000                x
+                0x10000004                . = ALIGN (0x4)
  *(COMMON)
-                0x1000000c                . = ALIGN (0x4)
-                0x1000000c                __bss_end = .
-                [0x1000000c]                PROVIDE (__bss_end, __bss_end)
+ COMMON         0x10000004       0x4d i2c_Stepper_Driver.o
+                0x10000004                step3
+                0x1000001c                step1
+                0x10000034                RegA
+                0x10000038                step2
+                0x10000050                RegB
+ *fill*         0x10000051        0x3 
+ COMMON         0x10000054        0x8 ./src/main.o
+                0x10000054                verticalStepper
+                0x10000058                horizontalStepper
+                0x1000005c                . = ALIGN (0x4)
+                0x1000005c                __bss_end = .
+                [0x1000005c]                PROVIDE (__bss_end, __bss_end)
 
-.stack          0x1000000c      0x404
-                0x10000010                . = ALIGN (0x8)
- *fill*         0x1000000c        0x4 
-                0x10000010                __stack_start = .
-                [0x10000010]                PROVIDE (__stack_start, __stack_start)
-                0x10000010                . = ALIGN (0x8)
-                0x10000010                __main_stack_start = .
-                [0x10000010]                PROVIDE (__main_stack_start, __main_stack_start)
-                0x10000410                . = (. + __main_stack_size)
- *fill*         0x10000010      0x400 
-                0x10000410                . = ALIGN (0x8)
-                0x10000410                __main_stack_end = .
-                [0x10000410]                PROVIDE (__main_stack_end, __main_stack_end)
-                0x10000410                . = ALIGN (0x8)
-                0x10000410                __process_stack_start = .
-                [0x10000410]                PROVIDE (__process_stack_start, __process_stack_start)
-                0x10000410                . = (. + __process_stack_size)
-                0x10000410                . = ALIGN (0x8)
-                0x10000410                __process_stack_end = .
-                [0x10000410]                PROVIDE (__process_stack_end, __process_stack_end)
-                0x10000410                . = ALIGN (0x8)
-                0x10000410                __stack_end = .
-                [0x10000410]                PROVIDE (__stack_end, __stack_end)
-                0x10000410                . = ALIGN (0x4)
-                0x10000410                __heap_start = .
-                [0x10000410]                PROVIDE (__heap_start, __heap_start)
-                0x10000410                . = ALIGN (0x4)
+.stack          0x1000005c      0x404
+                0x10000060                . = ALIGN (0x8)
+ *fill*         0x1000005c        0x4 
+                0x10000060                __stack_start = .
+                [0x10000060]                PROVIDE (__stack_start, __stack_start)
+                0x10000060                . = ALIGN (0x8)
+                0x10000060                __main_stack_start = .
+                [0x10000060]                PROVIDE (__main_stack_start, __main_stack_start)
+                0x10000460                . = (. + __main_stack_size)
+ *fill*         0x10000060      0x400 
+                0x10000460                . = ALIGN (0x8)
+                0x10000460                __main_stack_end = .
+                [0x10000460]                PROVIDE (__main_stack_end, __main_stack_end)
+                0x10000460                . = ALIGN (0x8)
+                0x10000460                __process_stack_start = .
+                [0x10000460]                PROVIDE (__process_stack_start, __process_stack_start)
+                0x10000460                . = (. + __process_stack_size)
+                0x10000460                . = ALIGN (0x8)
+                0x10000460                __process_stack_end = .
+                [0x10000460]                PROVIDE (__process_stack_end, __process_stack_end)
+                0x10000460                . = ALIGN (0x8)
+                0x10000460                __stack_end = .
+                [0x10000460]                PROVIDE (__stack_end, __stack_end)
+                0x10000460                . = ALIGN (0x4)
+                0x10000460                __heap_start = .
+                [0x10000460]                PROVIDE (__heap_start, __heap_start)
+                0x10000460                . = ALIGN (0x4)
                 0x10001000                __heap_end = __ram_end
                 [0x10001000]                PROVIDE (__heap_end, __heap_end)
 
@@ -368,10 +417,12 @@ END GROUP
 .comment        0x00000000       0x70
  .comment       0x00000000       0x70 timer.o
                                  0x71 (size before relaxing)
+ .comment       0x00000000       0x71 adconv.o
  .comment       0x00000000       0x71 sw_uart.o
  .comment       0x00000000       0x71 MCP23017.o
  .comment       0x00000000       0x71 i2c.o
  .comment       0x00000000       0x71 i2c_Stepper_Driver.o
+ .comment       0x00000000       0x71 pins.o
  .comment       0x00000000       0x71 ./src/main.o
  .comment       0x00000000       0x71 cortex_startup.o
 
@@ -405,30 +456,34 @@ END GROUP
  .ARM.attributes
                 0x00000000       0x31 timer.o
  .ARM.attributes
-                0x00000031       0x31 sw_uart.o
+                0x00000031       0x31 adconv.o
  .ARM.attributes
-                0x00000062       0x31 MCP23017.o
+                0x00000062       0x31 sw_uart.o
  .ARM.attributes
-                0x00000093       0x31 i2c.o
+                0x00000093       0x31 MCP23017.o
  .ARM.attributes
-                0x000000c4       0x31 i2c_Stepper_Driver.o
+                0x000000c4       0x31 i2c.o
  .ARM.attributes
-                0x000000f5       0x31 ./src/main.o
+                0x000000f5       0x31 i2c_Stepper_Driver.o
  .ARM.attributes
-                0x00000126       0x31 cortex_startup.o
+                0x00000126       0x31 pins.o
  .ARM.attributes
-                0x00000157       0x1e c:/program files (x86)/gnu tools arm embedded/4.8 2014q1/bin/../lib/gcc/arm-none-eabi/4.8.3/armv6-m\libgcc.a(_thumb1_case_uqi.o)
+                0x00000157       0x31 ./src/main.o
  .ARM.attributes
-                0x00000175       0x1e c:/program files (x86)/gnu tools arm embedded/4.8 2014q1/bin/../lib/gcc/arm-none-eabi/4.8.3/armv6-m\libgcc.a(_udivsi3.o)
+                0x00000188       0x31 cortex_startup.o
  .ARM.attributes
-                0x00000193       0x1e c:/program files (x86)/gnu tools arm embedded/4.8 2014q1/bin/../lib/gcc/arm-none-eabi/4.8.3/armv6-m\libgcc.a(_dvmd_tls.o)
+                0x000001b9       0x1e c:/program files (x86)/gnu tools arm embedded/4.8 2014q1/bin/../lib/gcc/arm-none-eabi/4.8.3/armv6-m\libgcc.a(_thumb1_case_uqi.o)
+ .ARM.attributes
+                0x000001d7       0x1e c:/program files (x86)/gnu tools arm embedded/4.8 2014q1/bin/../lib/gcc/arm-none-eabi/4.8.3/armv6-m\libgcc.a(_udivsi3.o)
+ .ARM.attributes
+                0x000001f5       0x1e c:/program files (x86)/gnu tools arm embedded/4.8 2014q1/bin/../lib/gcc/arm-none-eabi/4.8.3/armv6-m\libgcc.a(_dvmd_tls.o)
 
 /DISCARD/
  *(.note.GNU-stack)
-                0x000002ec                PROVIDE (__text_size, (__text_end - __text_start))
+                0x00000694                PROVIDE (__text_size, (__text_end - __text_start))
                 0x00000000                PROVIDE (__exidx_size, (__exidx_end - __exidx_start))
-                0x0000000c                PROVIDE (__data_size, (__data_end - __data_start))
-                0x00000000                PROVIDE (__bss_size, (__bss_end - __bss_start))
+                0x00000000                PROVIDE (__data_size, (__data_end - __data_start))
+                0x0000005c                PROVIDE (__bss_size, (__bss_end - __bss_start))
                 0x00000400                PROVIDE (__stack_size, (__stack_end - __stack_start))
-                0x00000bf0                PROVIDE (__heap_size, (__heap_end - __heap_start))
+                0x00000ba0                PROVIDE (__heap_size, (__heap_end - __heap_start))
 OUTPUT(src/main.elf elf32-littlearm)

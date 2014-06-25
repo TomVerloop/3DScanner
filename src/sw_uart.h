@@ -16,4 +16,4 @@ int uart_receive_blocking();
 
 int uart_receive_non_blocking();
 
-char uart_send(unsigned int data);
+char uart_send(char data);

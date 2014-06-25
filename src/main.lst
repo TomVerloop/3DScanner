@@ -11,6 +11,7 @@
 	.eabi_attribute 18, 4
 	.code	16
 	.file	"main.c"
+	.global	__aeabi_uidiv
 	.section	.text.startup.main,"ax",%progbits
 	.align	1
 	.global	main
@@ -18,71 +19,115 @@
 	.thumb_func
 	.type	main, %function
 main:
-	push	{r4, lr}
+	push	{r0, r1, r2, r4, r5, r6, r7, lr}
+	bl	adc_init
 	bl	uart_init
 	bl	timer_init
+	mov	r0, #64
+	bl	stepperInit
 .L2:
+	bl	uart_receive_non_blocking
+	add	r0, r0, #1
+	bne	.L22
 	mov	r0, #2
 	bl	uart_send
-	cmp	r0, #0
-	bne	.L8
 	mov	r0, #250
 	lsl	r0, r0, #2
 	bl	delay
 	b	.L2
-.L8:
+.L22:
 	bl	uart_receive_blocking
 	cmp	r0, #3
 	bne	.L2
-.L6:
-	ldr	r4, .L9
-	ldrb	r0, [r4]
-	bl	uart_send
-	ldrb	r0, [r4, #1]
-	bl	uart_send
-	ldr	r4, .L9+4
-	ldrb	r0, [r4]
-	bl	uart_send
-	ldrb	r0, [r4, #1]
-	bl	uart_send
-	ldr	r4, .L9+8
-	ldrb	r0, [r4]
-	bl	uart_send
-	ldrb	r0, [r4, #1]
-	bl	uart_send
-	b	.L6
+	ldr	r4, .L24
+	mov	r3, #0
+.L20:
+	str	r3, [r4]
+	ldr	r3, [r4]
+	cmp	r3, #255
+	bgt	.L2
+	ldr	r5, .L24+4
+	mov	r3, #0
+.L19:
+	str	r3, [r5]
+	ldr	r3, [r5]
+	cmp	r3, #255
+	bgt	.L23
+	bl	adc_ready
+	cmp	r0, #0
+	beq	.L8
+	mov	r7, #3
 .L10:
+	bl	adc_ready
+	cmp	r0, #0
+	beq	.L10
+	ldr	r6, .L24+8
+	sub	r7, r7, #1
+	ldr	r3, [r6]
+	str	r3, [sp, #4]
+	bl	adc_getVal
+	ldr	r3, [sp, #4]
+	add	r0, r0, r3
+	str	r0, [r6]
+	cmp	r7, #0
+	bne	.L10
+	mov	r1, #3
+	bl	__aeabi_uidiv
+	str	r0, [r6]
+	asr	r0, r0, #3
+	uxtb	r0, r0
+	bl	uart_send
+.L8:
+	mov	r0, #8
+	ldr	r1, .L24+12
+	bl	stepperStep
+	ldr	r3, [r5]
+	add	r3, r3, #1
+	b	.L19
+.L23:
+	mov	r0, #8
+	ldr	r1, .L24+16
+	bl	stepperStep
+	ldr	r3, [r4]
+	add	r3, r3, #1
+	b	.L20
+.L25:
 	.align	2
-.L9:
+.L24:
+	.word	verticalStepper
+	.word	horizontalStepper
 	.word	.LANCHOR0
-	.word	.LANCHOR1
-	.word	.LANCHOR2
+	.word	step1
+	.word	step3
 	.size	main, .-main
-	.global	z
-	.global	y
+	.section	.text.sendData,"ax",%progbits
+	.align	1
+	.global	sendData
+	.code	16
+	.thumb_func
+	.type	sendData, %function
+sendData:
+	push	{r3, lr}
+	asr	r3, r0, #31
+	lsr	r3, r3, #29
+	add	r0, r3, r0
+	asr	r0, r0, #3
+	uxtb	r0, r0
+	bl	uart_send
+	@ sp needed
+	pop	{r3, pc}
+	.size	sendData, .-sendData
 	.global	x
+	.comm	verticalStepper,4,4
+	.comm	horizontalStepper,4,4
 	.comm	step3,24,4
 	.comm	step2,24,4
 	.comm	step1,24,4
-	.section	.data.x,"aw",%progbits
+	.section	.bss.x,"aw",%nobits
 	.align	2
 	.set	.LANCHOR0,. + 0
 	.type	x, %object
 	.size	x, 4
 x:
-	.word	1000
-	.section	.data.y,"aw",%progbits
-	.align	2
-	.set	.LANCHOR1,. + 0
-	.type	y, %object
-	.size	y, 4
-y:
-	.word	1000
-	.section	.data.z,"aw",%progbits
-	.align	2
-	.set	.LANCHOR2,. + 0
-	.type	z, %object
-	.size	z, 4
-z:
-	.word	1000
+	.space	4
 	.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.8.3 20140228 (release) [ARM/embedded-4_8-branch revision 208322]"

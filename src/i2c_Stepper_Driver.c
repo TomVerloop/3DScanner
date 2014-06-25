@@ -8,6 +8,7 @@
 #include "MCP23017.h"
 #include "i2c_Stepper_Driver.h"
 #include "timer.h"
+#include <stdlib.h>
 
 
 
@@ -66,7 +67,7 @@ void stepMotor(int thisStep, Stepper* step)
 	else
 	{
 		RegB &= ~(regvalue << step->shiftNo);
-		regvalue = RegA;
+		regvalue = RegB;
 	}
 	switch (thisStep)
 	{
@@ -151,20 +152,20 @@ void stepperInit(int steps)
 	step1.stepperStepsPerRotation = steps;
 	step1.stepperPosition = 0;
 	step1.stepperStepNumber = 0;
-	step1.stepperStepDelay = 100 * 100;
+	step1.stepperStepDelay = 100 * 1000;
 	step2.Register = 0x13;
 	step2.shiftNo = 4;
 	step2.stepperStepsPerRotation = steps;
 	step2.stepperPosition = 0;
 	step2.stepperStepNumber = 0;
-	step2.stepperStepDelay = 100 * 100;
+	step2.stepperStepDelay = 100 * 1000;
 	step3.Register = 0x12;
 	step3.shiftNo = 0;
 	step3.stepperPosition = 0;
 	step3.stepperStepNumber = 0;
-	step3.stepperStepDelay = 100 * 100;
+	step3.stepperStepDelay = 100 * 1000;
 	step3.stepperStepsPerRotation = steps;
-	stepperSetSpeed(100, &step1);
-	stepperSetSpeed(100, &step2);
-	stepperSetSpeed(100, &step3);
+	stepperSetSpeed(200, &step1);
+	stepperSetSpeed(200, &step2);
+	stepperSetSpeed(200, &step3);
 }

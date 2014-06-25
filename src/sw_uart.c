@@ -77,43 +77,23 @@ int uart_receive_blocking()
 	}
 	return LPC_UART->RBR;               //store received data (sec 13.5.1)
 	int data = LPC_UART->RBR;
-	if (data != 0x01)
-	{
-		uart_send(0x01);
-	}
-	return 0;
+	return data;
 }
 
 int uart_receive_non_blocking()
 {
 	if (LPC_UART->LSR & 0x01) //if Receiver Data Ready bit set (sec 13.5.9)
 	{
-		int data = LPC_UART->RBR;
-		if (data != 0x01)
-		{
-			uart_send(0x01);
-		}
-		return data;
+		return LPC_UART->RBR;
 	}
 	else
 		return -1;
 }
 
-char uart_send(unsigned int data)
+char uart_send(char data)
 {
-	LPC_UART->THR |= data & 0xFF;
-	if (data == 0x01)
-	{
-		return 1;
-	}
-	int x = now() + 100 * 1000;
-	while (x > now())
-	{
-		unsigned int ack = uart_receive_non_blocking();
-		if (ack == 0x01)
-		{
-			return 1;
-		}
-	}
-	return 0;
+	LPC_UART->THR = (data & 0xFF);
+
+	return 1;
+
 }
